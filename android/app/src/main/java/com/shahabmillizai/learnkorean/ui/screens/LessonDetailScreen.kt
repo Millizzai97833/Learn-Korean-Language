@@ -27,7 +27,7 @@ import com.shahabmillizai.learnkorean.tts.KoreanTtsManager
 import com.shahabmillizai.learnkorean.ui.theme.TaegeukBlue
 import com.shahabmillizai.learnkorean.ui.theme.TaegeukRed
 import com.shahabmillizai.learnkorean.ui.theme.UrduEmerald
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LessonDetailScreen(
     lessonId: String,
