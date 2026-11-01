@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,13 +17,21 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
 
-        // Default to Google Test Ads during local development
-        buildConfigField("String", "ADMOB_APP_ID", "\"ca-app-pub-2790436784008422~8320873870\"")
+        buildConfigField(
+            "String",
+            "ADMOB_APP_ID",
+            "\"ca-app-pub-2790436784008422~8320873870\""
+        )
         buildConfigField("String", "DEVELOPER_NAME", "\"Shahab Millizai\"")
+
+        // Real AdMob App ID for release builds
+        manifestPlaceholders["admobAppId"] =
+            "ca-app-pub-2790436784008422~8320873870"
     }
 
     buildTypes {
@@ -31,7 +40,11 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
 
-            // Google Official Test Ad Unit IDs (Never click live ads during testing)
+            // Google official test App ID
+            manifestPlaceholders["admobAppId"] =
+                "ca-app-pub-3940256099942544~3347511713"
+
+            // Google official test Ad Unit IDs
             buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/5354046379\"")
@@ -39,15 +52,17 @@ android {
             buildConfigField("String", "ADMOB_NATIVE_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("Boolean", "IS_TEST_ADS", "true")
         }
+
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
-            // Production Real AdMob Ad Unit IDs
+            // Your real AdMob Ad Unit IDs
             buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-2790436784008422/7007792206\"")
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/5419378368\"")
             buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/7366437749\"")
