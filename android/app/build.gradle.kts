@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,14 +21,9 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField(
-            "String",
-            "ADMOB_APP_ID",
-            "\"ca-app-pub-2790436784008422~8320873870\""
-        )
+        buildConfigField("String", "ADMOB_APP_ID", "\"ca-app-pub-2790436784008422~8320873870\"")
         buildConfigField("String", "DEVELOPER_NAME", "\"Shahab Millizai\"")
 
-        // Real AdMob App ID for release builds
         manifestPlaceholders["admobAppId"] =
             "ca-app-pub-2790436784008422~8320873870"
     }
@@ -40,11 +34,9 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
 
-            // Google official test App ID
             manifestPlaceholders["admobAppId"] =
                 "ca-app-pub-3940256099942544~3347511713"
 
-            // Google official test Ad Unit IDs
             buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/5354046379\"")
@@ -62,7 +54,6 @@ android {
                 "proguard-rules.pro"
             )
 
-            // Your real AdMob Ad Unit IDs
             buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-2790436784008422/7007792206\"")
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/5419378368\"")
             buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/7366437749\"")
@@ -97,7 +88,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -106,11 +99,9 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    // Google Mobile Ads SDK & UMP Consent
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
 
-    // Data parsing & Coroutines
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
 
