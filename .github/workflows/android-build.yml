@@ -1,16 +1,21 @@
+
 name: Android CI/CD Build & Package
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   workflow_dispatch:
 
 jobs:
   build:
     name: Build & Test Android APK
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: android
 
     steps:
       - name: Checkout Source Code
@@ -21,41 +26,32 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant Execute Permission to Gradlew
-        run: chmod +x ./gradlew || (cd android && chmod +x ./gradlew)
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Verify Gradle
+        run: gradle --version
 
       - name: Run Unit Tests
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew testDebugUnitTest --stacktrace
-          elif [ -f "./android/gradlew" ]; then
-            cd android && ./gradlew testDebugUnitTest --stacktrace
-          fi
+        run: gradle testDebugUnitTest --stacktrace
 
       - name: Build Debug APK
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --stacktrace
-          elif [ -f "./android/gradlew" ]; then
-            cd android && ./gradlew assembleDebug --stacktrace
-          fi
+        run: gradle assembleDebug --stacktrace
 
-      - name: Build Release APK (Unsigned / Signed)
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleRelease --stacktrace || true
-          elif [ -f "./android/gradlew" ]; then
-            cd android && ./gradlew assembleRelease --stacktrace || true
-          fi
+      - name: Build Release APK
+        run: gradle assembleRelease --stacktrace
+        continue-on-error: true
 
       - name: Upload Debug APK Artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: learn-korean-debug-apk
-          path: |
-            **/build/outputs/apk/debug/*.apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Upload Release APK Artifact
@@ -64,6 +60,7 @@ jobs:
         with:
           name: learn-korean-release-apk
           path: |
-            **/build/outputs/apk/release/*.apk
-            **/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: warn
           retention-days: 30
