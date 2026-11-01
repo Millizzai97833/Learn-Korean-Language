@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Learn Korean Language</string>
+    <string name="developer_name">Shahab Millizai</string>
+    <string name="app_description">Complete Korean Language Learning Course with Hangul trainer, pronunciation, grammar, and Urdu + English explanations.</string>
+    
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Home</string>
+    <string name="nav_lessons">Lessons</string>
+    <string name="nav_practice">Practice</string>
+    <string name="nav_dictionary">Dictionary</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Levels -->
+    <string name="level_beginner">Beginner</string>
+    <string name="level_elementary">Elementary</string>
+    <string name="level_intermediate">Intermediate</string>
+    <string name="level_advanced">Advanced</string>
+
+    <!-- AdMob labels -->
+    <string name="ad_badge">AD</string>
+    <string name="reward_prompt_title">Unlock Bonus Vocab Pack?</string>
+    <string name="reward_prompt_desc">Watch a short sponsored message to unlock exclusive TOPIK exam phrases, bonus audio hints, and +150 XP!</string>
+    <string name="reward_btn_watch">Watch Message</string>
+    <string name="reward_btn_cancel">Maybe Later</string>
+
+    <!-- Privacy & About -->
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="privacy_policy_url">https://shahabmillizai.github.io/learn-korean-privacy/</string>
+</resources>

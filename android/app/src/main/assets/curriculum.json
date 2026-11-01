@@ -1,0 +1,783 @@
+{
+  "curriculum_version": "1.0.0",
+  "app_title": "Learn Korean Language",
+  "developer": "Shahab Millizai",
+  "levels": [
+    {
+      "id": "beginner",
+      "name": "Beginner",
+      "korean_name": "초급",
+      "urdu_name": "ابتدائی سطح",
+      "description": "Hangul alphabet, consonants, vowels, syllable blocks, basic greetings, numbers and everyday vocabulary.",
+      "lessons": [
+        {
+          "id": "beg_01",
+          "title": "Hangul Alphabet: Basic Consonants",
+          "korean_title": "한글 기본 자음",
+          "urdu_title": "ہنگول حروفِ تہجی: بنیادی حروفِ صامت",
+          "description": "Master the first 14 consonants created by King Sejong in 1443 based on the shape of speech organs.",
+          "grammar_notes": "Korean consonants are grouped by articulation: ㄱ (g/k - tongue root touches soft palate), ㄴ (n - tongue tip touches upper gums), ㄷ (d/t), ㄹ (r/l), ㅁ (m - closed lips), ㅂ (b/p), ㅅ (s), ㅇ (silent at start, 'ng' at end), ㅈ (j), ㅊ (ch), ㅋ (k), ㅌ (t), ㅍ (p), ㅎ (h).",
+          "urdu_explanation": "کورین زبان کے حروفِ تہجی کو ہنگول کہا جاتا ہے۔ بنیادی حروفِ صامت 14 ہیں جو بولتے وقت منہ اور زبان کی حرکات کے مطابق بنائے گئے ہیں۔",
+          "items": [
+            {
+              "korean": "ㄱ",
+              "romanization": "Giyeok (g/k)",
+              "english": "G as in gun / K at end",
+              "urdu": "گ یا ک کی آواز",
+              "example_korean": "가방 (gabang)",
+              "example_english": "Bag",
+              "example_urdu": "بستہ / بیگ"
+            },
+            {
+              "korean": "ㄴ",
+              "romanization": "Nieun (n)",
+              "english": "N as in nose",
+              "urdu": "ن کی آواز",
+              "example_korean": "나무 (namu)",
+              "example_english": "Tree",
+              "example_urdu": "درخت"
+            },
+            {
+              "korean": "ㄷ",
+              "romanization": "Digeut (d/t)",
+              "english": "D as in door / T at end",
+              "urdu": "د یا ت کی آواز",
+              "example_korean": "다리 (dari)",
+              "example_english": "Leg / Bridge",
+              "example_urdu": "ٹانگ / پل"
+            },
+            {
+              "korean": "ㄹ",
+              "romanization": "Rieul (r/l)",
+              "english": "Soft R between vowels / L at end",
+              "urdu": "ر یا ل کی درمیانی نرم آواز",
+              "example_korean": "라면 (ramyeon)",
+              "example_english": "Ramen noodles",
+              "example_urdu": "رامیون نوڈلز"
+            },
+            {
+              "korean": "ㅁ",
+              "romanization": "Mieum (m)",
+              "english": "M as in moon",
+              "urdu": "م کی آواز",
+              "example_korean": "모자 (moja)",
+              "example_english": "Hat",
+              "example_urdu": "ٹوپی"
+            },
+            {
+              "korean": "ㅂ",
+              "romanization": "Bieup (b/p)",
+              "english": "B as in baby / P at end",
+              "urdu": "ب یا پ کی آواز",
+              "example_korean": "바나나 (banana)",
+              "example_english": "Banana",
+              "example_urdu": "کیلا"
+            },
+            {
+              "korean": "ㅅ",
+              "romanization": "Siot (s)",
+              "english": "S as in sun",
+              "urdu": "س کی آواز",
+              "example_korean": "사과 (sagwa)",
+              "example_english": "Apple",
+              "example_urdu": "سیب"
+            },
+            {
+              "korean": "ㅇ",
+              "romanization": "Ieung (silent / ng)",
+              "english": "Silent placeholder at start, 'ng' as final consonant",
+              "urdu": "شروع میں خاموش، آخر میں غنہ ن (نگ)",
+              "example_korean": "아이 (ai)",
+              "example_english": "Child",
+              "example_urdu": "بچہ"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which Korean consonant sounds like 'N' as in nose?",
+              "urdu_question": "کون سا کورین حرف 'ن' کی آواز دیتا ہے؟",
+              "options": ["ㄱ", "ㄴ", "ㅁ", "ㅅ"],
+              "correct_index": 1,
+              "explanation": "ㄴ (Nieun) sounds like the English 'N' and Urdu 'ن'."
+            },
+            {
+              "question": "What is the meaning of '사과' (sagwa)?",
+              "urdu_question": "'사과' کا کیا مطلب ہے؟",
+              "options": ["Apple", "Tree", "Hat", "Bag"],
+              "correct_index": 0,
+              "explanation": "사과 (sagwa) means Apple (سیب)."
+            }
+          ]
+        },
+        {
+          "id": "beg_02",
+          "title": "Hangul Alphabet: Basic Vowels",
+          "korean_title": "한글 기본 모음",
+          "urdu_title": "ہنگول حروفِ علت: بنیادی مصوتات",
+          "description": "Learn the 10 basic vowels constructed from the philosophical triad: Heaven (•), Earth (ㅡ), and Man (ㅣ).",
+          "grammar_notes": "Vowels are vertical (ㅏ, ㅑ, ㅓ, ㅕ, ㅣ) placed to the right of consonants, or horizontal (ㅗ, ㅛ, ㅜ, ㅠ, ㅡ) placed below consonants.",
+          "urdu_explanation": "کورین مصوتات (حروفِ علت) تین علامتوں پر مبنی ہیں: آسمان (نقطہ)، زمین (افقی لکیر ㅡ)، اور انسان (عمودی لکیر ㅣ)۔",
+          "items": [
+            {
+              "korean": "ㅏ",
+              "romanization": "a",
+              "english": "Ah (father)",
+              "urdu": "آ (باپ والا)",
+              "example_korean": "아이 (ai)",
+              "example_english": "Child",
+              "example_urdu": "بچہ"
+            },
+            {
+              "korean": "ㅓ",
+              "romanization": "eo",
+              "english": "Uh/Oh (open sound as in cup)",
+              "urdu": "اَ / او (کھلی آواز)",
+              "example_korean": "어머니 (eomeoni)",
+              "example_english": "Mother",
+              "example_urdu": "امی / والدہ"
+            },
+            {
+              "korean": "ㅗ",
+              "romanization": "o",
+              "english": "Oh (round lips as in boat)",
+              "urdu": "او (ہونٹ گول کر کے)",
+              "example_korean": "오이 (oi)",
+              "example_english": "Cucumber",
+              "example_urdu": "کھیرا"
+            },
+            {
+              "korean": "ㅜ",
+              "romanization": "u",
+              "english": "Oo (boot)",
+              "urdu": "اُو (بُوٹ والا)",
+              "example_korean": "우유 (uyu)",
+              "example_english": "Milk",
+              "example_urdu": "دودھ"
+            },
+            {
+              "korean": "ㅡ",
+              "romanization": "eu",
+              "english": "Eu (flat lips, say 'oo' with wide mouth)",
+              "urdu": "اِو (مسکراتے ہوئے دانت جوڑ کر)",
+              "example_korean": "은행 (eunhaeng)",
+              "example_english": "Bank",
+              "example_urdu": "بینک"
+            },
+            {
+              "korean": "ㅣ",
+              "romanization": "i",
+              "english": "Ee (see)",
+              "urdu": "ای (سی والا)",
+              "example_korean": "이름 (ireum)",
+              "example_english": "Name",
+              "example_urdu": "نام"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What is 'Milk' in Korean?",
+              "urdu_question": "کورین میں 'دودھ' کو کیا کہتے ہیں؟",
+              "options": ["오이", "우유", "아이", "나무"],
+              "correct_index": 1,
+              "explanation": "우유 (uyu) translates to milk (دودھ)."
+            }
+          ]
+        },
+        {
+          "id": "beg_03",
+          "title": "Essential Greetings & Politeness",
+          "korean_title": "기본 인사 및 예절",
+          "urdu_title": "بنیادی سلام اور رسمی آداب",
+          "description": "Essential polite greetings used daily in South Korea with appropriate bows and etiquette.",
+          "grammar_notes": "Korean has several levels of politeness. The standard polite form ends in '-요' (-yo) or '-ㅂ니다/습니다' (-mnida/seumnida).",
+          "urdu_explanation": "کورین معاشرے میں احترام اور آداب کا خاص خیال رکھا جاتا ہے۔ گفتگو کے اختتام پر -요 یا -습니다 کا اضافہ کیا جاتا ہے۔",
+          "items": [
+            {
+              "korean": "안녕하세요",
+              "romanization": "Annyeonghaseyo",
+              "english": "Hello / Good morning / How are you?",
+              "urdu": "ہیلو / السلام علیکم",
+              "example_korean": "안녕하세요, 저는 민수예요.",
+              "example_english": "Hello, I am Minsu.",
+              "example_urdu": "السلام علیکم، میں من سو ہوں۔"
+            },
+            {
+              "korean": "감사합니다",
+              "romanization": "Gamsahamnida",
+              "english": "Thank you (Formal polite)",
+              "urdu": "آپ کا بہت شکریہ",
+              "example_korean": "도와주셔서 감사합니다.",
+              "example_english": "Thank you for helping me.",
+              "example_urdu": "مدد کرنے کا بہت شکریہ۔"
+            },
+            {
+              "korean": "죄송합니다",
+              "romanization": "Joesonghamnida",
+              "english": "I am sorry (Formal)",
+              "urdu": "معاف کیجیے گا / معذرت خواہ ہوں",
+              "example_korean": "늦어서 죄송합니다.",
+              "example_english": "I am sorry for being late.",
+              "example_urdu": "دیر سے آنے پر معذرت خواہ ہوں۔"
+            },
+            {
+              "korean": "안녕히 계세요",
+              "romanization": "Annyeonghi gyeseyo",
+              "english": "Goodbye (Said by person leaving to someone staying)",
+              "urdu": "خدا حافظ (جب آپ جا رہے ہوں اور دوسرا شخص وہیں رہے)",
+              "example_korean": "먼저 가겠습니다. 안녕히 계세요.",
+              "example_english": "I will leave first. Goodbye.",
+              "example_urdu": "میں پہلے نکلتا ہوں، اللہ نگہبان۔"
+            },
+            {
+              "korean": "안녕히 가세요",
+              "romanization": "Annyeonghi gaseyo",
+              "english": "Goodbye (Said to someone who is leaving: 'Go in peace')",
+              "urdu": "فی امان اللہ (جب دوسرا شخص جا رہا ہو: 'خیریت سے جائیں')",
+              "example_korean": "조심히 들어가세요. 안녕히 가세요.",
+              "example_english": "Get home safely. Goodbye.",
+              "example_urdu": "حفاظت سے گھر پہنچیں، خدا حافظ۔"
+            },
+            {
+              "korean": "만나서 반갑습니다",
+              "romanization": "Mannaseo bangapseumnida",
+              "english": "Nice to meet you",
+              "urdu": "آپ سے مل کر بہت خوشی ہوئی",
+              "example_korean": "처음 뵙겠습니다. 만나서 반갑습니다.",
+              "example_english": "How do you do. Nice to meet you.",
+              "example_urdu": "پہلی بار ملاقات ہے، مل کر خوشی ہوئی۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "If you are leaving a friend's house while they stay, what goodbye do you say?",
+              "urdu_question": "اگر آپ کسی کے گھر سے رخصت ہو رہے ہیں جبکہ وہ وہیں رہ رہے ہیں، تو کون سا الوداعی جملہ کہیں گے؟",
+              "options": ["안녕히 가세요", "안녕히 계세요", "감사합니다", "죄송합니다"],
+              "correct_index": 1,
+              "explanation": "안녕히 계세요 literally means 'Stay in peace' (رہنے والے کو کہا جاتا ہے)."
+            }
+          ]
+        },
+        {
+          "id": "beg_04",
+          "title": "Korean Number Systems: Sino & Native",
+          "korean_title": "한국어 숫자 체계 (한자어 & 순우리말)",
+          "urdu_title": "کورین اعداد کے دونوں نظام: سائنو اور مقامی",
+          "description": "Understand when to use Sino-Korean (dates, money, minutes) vs Native Korean (counting objects, age, hours).",
+          "grammar_notes": "Sino-Korean: 일 (1), 이 (2), 삼 (3), 사 (4), 오 (5), 육 (6), 칠 (7), 팔 (8), 구 (9), 십 (10). Native Korean: 하나 (1), 둘 (2), 셋 (3), 넷 (4), 다섯 (5), 여섯 (6), 일곱 (7), 여덟 (8), 아홉 (9), 열 (10).",
+          "urdu_explanation": "کورین میں گنتی کے دو طریقے ہیں: سائنو کورین (پیسے، تاریخ، منٹ کے لیے) اور مقامی کورین (چیزیں گننے، عمر اور گھنٹوں کے لیے)۔",
+          "items": [
+            {
+              "korean": "일 / 하나",
+              "romanization": "Il / Hana",
+              "english": "One (Sino / Native)",
+              "urdu": "ایک (سائنو / مقامی)",
+              "example_korean": "사과 하나 주세요.",
+              "example_english": "Please give me one apple.",
+              "example_urdu": "براہ کرم مجھے ایک سیب دیں۔"
+            },
+            {
+              "korean": "이 / 둘",
+              "romanization": "I / Dul",
+              "english": "Two (Sino / Native)",
+              "urdu": "دو (سائنو / مقامی)",
+              "example_korean": "커피 두 잔 주세요.",
+              "example_english": "Two cups of coffee, please.",
+              "example_urdu": "دو کپ کافی دیجیے۔"
+            },
+            {
+              "korean": "삼 / 셋",
+              "romanization": "Sam / Set",
+              "english": "Three (Sino / Native)",
+              "urdu": "تین (سائنو / مقامی)",
+              "example_korean": "삼월 (Sam-wol)",
+              "example_english": "March (Month 3)",
+              "example_urdu": "مارچ (تیسرا مہینہ)"
+            },
+            {
+              "korean": "십 / 열",
+              "romanization": "Sip / Yeol",
+              "english": "Ten (Sino / Native)",
+              "urdu": "دس (سائنو / مقامی)",
+              "example_korean": "십 분 (Sip bun)",
+              "example_english": "Ten minutes",
+              "example_urdu": "دس منٹ"
+            },
+            {
+              "korean": "백 / 천 / 만",
+              "romanization": "Baek / Cheon / Man",
+              "english": "100 / 1,000 / 10,000 (Won currency)",
+              "urdu": "سو / ہزار / دس ہزار (کورین وان کرنسی)",
+              "example_korean": "오천 원 (O-cheon won)",
+              "example_english": "5,000 Won",
+              "example_urdu": "پانچ ہزار وان"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which number system is used for Korean currency (Won) and calendar dates?",
+              "urdu_question": "کورین کرنسی (وان) اور تاریخوں کے لیے کون سا حسابی نظام استعمال ہوتا ہے؟",
+              "options": ["Native Korean", "Sino-Korean", "Roman Numerals", "Hanja only"],
+              "correct_index": 1,
+              "explanation": "Sino-Korean numbers (일, 이, 삼...) are used for currency (원), dates, and minutes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elementary",
+      "name": "Elementary",
+      "korean_name": "중초급",
+      "urdu_name": "ابتدائی ثانوی سطح",
+      "description": "Sentence structure (SOV), grammar particles (은/는, 이/가, 을/를, 에/에서), tenses, and daily conversations.",
+      "lessons": [
+        {
+          "id": "elem_01",
+          "title": "Korean Sentence Structure (SOV)",
+          "korean_title": "한국어 문장 구조 (주어-목적어-서술어)",
+          "urdu_title": "کورین جملے کی ساخت (فاعل-مفعول-فعل)",
+          "description": "Unlike English (SVO), Korean places the verb at the very end of the sentence (SOV), exactly identical to Urdu sentence structure!",
+          "grammar_notes": "English: I (S) eat (V) bread (O). Korean: 저는 (S) 빵을 (O) 먹어요 (V). Urdu: میں (S) روٹی (O) کھاتا ہوں (V). This makes Korean intuitive for Urdu speakers!",
+          "urdu_explanation": "کورین زبان کی جملہ بندی اردو زبان کی طرح فاعل-مفعول-فعل (SOV) پر مبنی ہے۔ یعنی فعل ہمیشہ جملے کے آخر میں آتا ہے۔",
+          "items": [
+            {
+              "korean": "저는 밥을 먹어요.",
+              "romanization": "Jeoneun babeul meogeoyo.",
+              "english": "I eat a meal / rice.",
+              "urdu": "میں کھانا کھاتا ہوں۔",
+              "example_korean": "민수는 한국어를 공부해요.",
+              "example_english": "Minsu studies Korean.",
+              "example_urdu": "من سو کورین زبان پڑھتا ہے۔"
+            },
+            {
+              "korean": "친구가 물을 마셔요.",
+              "romanization": "Chinguga mureul masyeoyo.",
+              "english": "The friend drinks water.",
+              "urdu": "دوست پانی پیتا ہے۔",
+              "example_korean": "선생님이 책을 읽어요.",
+              "example_english": "The teacher reads a book.",
+              "example_urdu": "استاد کتاب پڑھتے ہیں۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Where does the verb always appear in a standard Korean sentence?",
+              "urdu_question": "معیاری کورین جملے میں فعل ہمیشہ کہاں آتا ہے؟",
+              "options": ["At the very beginning", "In the middle between subject and object", "At the very end", "Anywhere randomly"],
+              "correct_index": 2,
+              "explanation": "In Korean (SOV), verbs and adjectives are strictly placed at the end of the sentence."
+            }
+          ]
+        },
+        {
+          "id": "elem_02",
+          "title": "Topic Particle (은/는) vs Subject Particle (이/가)",
+          "korean_title": "주제 조사 (은/는) 와 주격 조사 (이/가)",
+          "urdu_title": "موضوعی حرفِ ربط (은/는) اور فاعلی حرفِ ربط (이/가)",
+          "description": "The most famous distinction in Korean grammar: 은/는 sets general topic or contrast; 이/가 highlights specific subject or new information.",
+          "grammar_notes": "Attach 은/이 after a consonant ending; attach 는/가 after a vowel ending. Use 은/는 for 'As for X' / comparison. Use 이/가 to answer 'Who/What did it?'.",
+          "urdu_explanation": "은/는 موضوع (Topic) یا تقابل کو ظاہر کرتا ہے، جبکہ 이/가 مخصوص فاعل (Subject) یا نئی معلومات کو نمایاں کرتا ہے۔",
+          "items": [
+            {
+              "korean": "저는 학생이에요.",
+              "romanization": "Jeoneun haksaeng-ieyo.",
+              "english": "As for me, I am a student.",
+              "urdu": "جہاں تک میرا تعلق ہے، میں ایک طالب علم ہوں۔",
+              "example_korean": "이름은 샤합이에요.",
+              "example_english": "My name is Shahab.",
+              "example_urdu": "میرا نام شہاب ہے۔"
+            },
+            {
+              "korean": "누가 왔어요? 민수가 왔어요.",
+              "romanization": "Nuga wasseoyo? Minsuga wasseoyo.",
+              "english": "Who came? Minsu came.",
+              "urdu": "کون آیا؟ من سو آیا۔",
+              "example_korean": "비가 와요.",
+              "example_english": "Rain is falling.",
+              "example_urdu": "بارش ہو رہی ہے۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which particle is used after a vowel-ending word to indicate a topic?",
+              "urdu_question": "مصوتے (واول) پر ختم ہونے والے لفظ کے بعد موضوعی حرفِ ربط کون سا لگتا ہے؟",
+              "options": ["은", "는", "이", "을"],
+              "correct_index": 1,
+              "explanation": "는 is attached after words ending in a vowel (e.g., 저는, 민수는)."
+            }
+          ]
+        },
+        {
+          "id": "elem_03",
+          "title": "Present, Past and Future Tenses",
+          "korean_title": "현재, 과거, 미래 시제",
+          "urdu_title": "حال، ماضی اور مستقبل کے زمانے",
+          "description": "Learn how to conjugate Korean verb stems into the three core polite tenses.",
+          "grammar_notes": "Present: -아요/어요. Past: -았어요/었어요. Future: -(으)ㄹ 거예요. Example stem 가다 (to go): 가요 (goes), 갔어요 (went), 갈 거예요 (will go).",
+          "urdu_explanation": "کورین افعال کی گردان: حال کے لیے -아요/어요، ماضی کے لیے -았어요/었어요، اور مستقبل کے لیے -(으)ㄹ 거예요 شامل کیا جاتا ہے۔",
+          "items": [
+            {
+              "korean": "지금 가요.",
+              "romanization": "Jigeum gayo.",
+              "english": "I go now / I am going now.",
+              "urdu": "میں ابھی جا رہا ہوں۔",
+              "example_korean": "학교에 가요.",
+              "example_english": "I go to school.",
+              "example_urdu": "میں اسکول جاتا ہوں۔"
+            },
+            {
+              "korean": "어제 갔어요.",
+              "romanization": "Eoje gasseoyo.",
+              "english": "I went yesterday.",
+              "urdu": "میں کل گیا تھا۔",
+              "example_korean": "어제 영화를 봤어요.",
+              "example_english": "I watched a movie yesterday.",
+              "example_urdu": "میں نے کل فلم دیکھی تھی۔"
+            },
+            {
+              "korean": "내일 갈 거예요.",
+              "romanization": "Naeil gal geoyeyo.",
+              "english": "I will go tomorrow.",
+              "urdu": "میں کل جاؤں گا۔",
+              "example_korean": "내일 한국어를 공부할 거예요.",
+              "example_english": "I will study Korean tomorrow.",
+              "example_urdu": "میں کل کورین پڑھوں گا۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What is the past tense form of '보다' (to see / watch)?",
+              "urdu_question": "'보다' (دیکھنا) کا صیغہ ماضی کیا ہوگا؟",
+              "options": ["봐요", "봤어요", "볼 거예요", "보세요"],
+              "correct_index": 1,
+              "explanation": "봤어요 (bwasseoyo) is the polite past tense of 보다."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "name": "Intermediate",
+      "korean_name": "중급",
+      "urdu_name": "متوسط سطح",
+      "description": "Complex connectors (-지만, -는데, -(으)니까, -(으)려고), natural dialogues, listening comprehension and idioms.",
+      "lessons": [
+        {
+          "id": "inter_01",
+          "title": "Connectors: -지만 (But) & -는데 (Background Context)",
+          "korean_title": "연결 어미: -지만 과 -는데/은데",
+          "urdu_title": "ربطی کلمات: -지만 (لیکن) اور -는데 (پسِ منظر)",
+          "description": "Express contrasting ideas and provide smooth contextual setup for questions or requests.",
+          "grammar_notes": "-지만 directly means 'but/although'. -는데/은데 gently sets the background before a suggestion, invitation, or contrast.",
+          "urdu_explanation": "-지만 کا مطلب 'لیکن / پر' ہے، جبکہ -는데 اگلے جملے یا درخواست کے لیے نرم پس منظر فراہم کرتا ہے۔",
+          "items": [
+            {
+              "korean": "한국어는 어렵지만 재미있어요.",
+              "romanization": "Hangugeoneun eoryeopjiman jaemiisseoyo.",
+              "english": "Korean is difficult, but it is interesting.",
+              "urdu": "کورین زبان مشکل ہے لیکن دلچسپ ہے۔",
+              "example_korean": "가격은 비싸지만 품질이 좋아요.",
+              "example_english": "The price is expensive, but the quality is good.",
+              "example_urdu": "قیمت مہنگی ہے مگر معیار اچھا ہے۔"
+            },
+            {
+              "korean": "지금 비가 오는데 우산이 있어요?",
+              "romanization": "Jigeum biga oneunde usani isseoyo?",
+              "english": "It is raining right now, do you have an umbrella?",
+              "urdu": "ابھی بارش ہو رہی ہے، کیا آپ کے پاس چھتری ہے؟",
+              "example_korean": "배가 고픈데 같이 밥 먹을래요?",
+              "example_english": "I am hungry, would you like to eat together?",
+              "example_urdu": "مجھے بھوک لگی ہے، کیا ساتھ کھانا کھائیں گے؟"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Complete the sentence: '매운 음식을 좋아하___ 많이 못 먹어요' (I like spicy food, BUT can't eat much).",
+              "urdu_question": "جملہ مکمل کریں: 'مجھے مصالحے دار کھانا پسند ہے لیکن زیادہ نہیں کھا سکتا'۔",
+              "options": ["-지만", "-니까", "-려고", "-아서"],
+              "correct_index": 0,
+              "explanation": "-지만 expresses contrasting facts ('but/although')."
+            }
+          ]
+        },
+        {
+          "id": "inter_02",
+          "title": "Intentions & Desires: -(으)려고 하다",
+          "korean_title": "의도 표현: -(으)려고 하다",
+          "urdu_title": "ارادہ اور خواہش کا اظہار: -(으)려고 하다",
+          "description": "Express your goals, plans, and intentions in casual and professional contexts.",
+          "grammar_notes": "Attach -려고 하다 to vowel stems; attach -으려고 하다 to consonant stems. Means 'to plan to / intend to'.",
+          "urdu_explanation": "جب آپ اپنے مستقبل کے ارادے یا منصوبے کا اظہار کرنا چاہیں تو فعل کے ساتھ -(으)려고 하다 استعمال کیا جاتا ہے۔",
+          "items": [
+            {
+              "korean": "내년에 한국에 가려고 해요.",
+              "romanization": "Naenyeone hanguge garyeogo haeyo.",
+              "english": "I intend to go to South Korea next year.",
+              "urdu": "میرا ارادہ اگلے سال جنوبی کوریا جانے کا ہے۔",
+              "example_korean": "토픽 시험을 보려고 해요.",
+              "example_english": "I intend to take the TOPIK exam.",
+              "example_urdu": "میں ٹوپک امتحان دینے کا ارادہ رکھتا ہوں۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does -(으)려고 하다 express?",
+              "urdu_question": "-(으)려고 하다 کس بات کا اظہار کرتا ہے؟",
+              "options": ["Past regret", "Intention or plan", "Passive action", "Imperative command"],
+              "correct_index": 1,
+              "explanation": "-(으)려고 하다 expresses an intention, plan, or purpose."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced",
+      "korean_name": "고급",
+      "urdu_name": "اعلیٰ / ایڈوانسڈ سطح",
+      "description": "Speech levels, honorific suffixes, proverbs (속담), TOPIK II advanced grammar patterns, and business dialogues.",
+      "lessons": [
+        {
+          "id": "adv_01",
+          "title": "Korean Honorifics & Speech Levels",
+          "korean_title": "높임말과 경어법 체계",
+          "urdu_title": "کورین تعظیمی زبان اور احترامی مراتب",
+          "description": "Master the intricate honorific system: subject honorifics (-시-), humble pronouns (저 vs 나), and formal endings.",
+          "grammar_notes": "Respectful nouns: 진지 (밥), 댁 (집), 연세 (나이). Subject honorific marker: -으시-. Example: 할머니께서 진지를 드세요 (Grandmother is eating a meal).",
+          "urdu_explanation": "بڑوں اور معزز افراد کے لیے کورین زبان میں مخصوص تعظیمی الفاظ (جیسے اردو میں 'آپ فرمائیے') اور لاحقہ -시- لگایا جاتا ہے۔",
+          "items": [
+            {
+              "korean": "할아버지께서 신문을 읽으십니다.",
+              "romanization": "Harabeojikkeseo sinmuneul ilgeusimnida.",
+              "english": "Grandfather is reading the newspaper (Formal honorific).",
+              "urdu": "دادا جان اخبار پڑھ رہے ہیں۔",
+              "example_korean": "교수님께서 말씀하셨습니다.",
+              "example_english": "The professor spoke.",
+              "example_urdu": "پروفیسر صاحب نے ارشاد فرمایا۔"
+            },
+            {
+              "korean": "어디에 가십니까?",
+              "romanization": "Eodie gasimnikka?",
+              "english": "Where are you going, sir/ma'am?",
+              "urdu": "آپ تشریف کہاں لے جا رہے ہیں؟",
+              "example_korean": "식사하셨습니까?",
+              "example_english": "Have you dined?",
+              "example_urdu": "کیا آپ نے کھانا تناول فرما لیا؟"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What is the honorific equivalent of '밥' (meal/rice)?",
+              "urdu_question": "'밥' (کھانا) کا تعظیمی متبادل کیا ہے؟",
+              "options": ["진지", "말씀", "연세", "성함"],
+              "correct_index": 0,
+              "explanation": "진지 (jinji) is the honorific term for meal/rice."
+            }
+          ]
+        },
+        {
+          "id": "adv_02",
+          "title": "TOPIK II Grammar: -기 마련이다 & Proverbs",
+          "korean_title": "토픽 고급 문법: -기 마련이다 및 속담",
+          "urdu_title": "ٹوپک اعلیٰ گرامر: -기 마련이다 اور کورین ضرب الامثال",
+          "description": "Express natural inevitabilities ('it is bound to be so') and understand cultural wisdom through idioms.",
+          "grammar_notes": "-기 마련이다 means 'it is natural that...' or 'is bound to happen'. Proverb: 시작이 반이다 (Starting is half the battle / Well begun is half done).",
+          "urdu_explanation": "-기 마련이다 کا مطلب ہے 'ایسا ہونا قدرتی / لازمی ہے'۔ کورین کہاوت '시작이 반이다' کا مطلب ہے 'شروع کرنا ہی آدھی کامیابی ہے'۔",
+          "items": [
+            {
+              "korean": "노력하면 성공하기 마련이다.",
+              "romanization": "Noryeokhamyeon seonggonghagi maryeon-ida.",
+              "english": "If you make efforts, you are bound to succeed.",
+              "urdu": "اگر آپ محنت کریں گے تو کامیابی لازماً مل کر رہے گی۔",
+              "example_korean": "시간이 지나면 상처는 아물기 마련이에요.",
+              "example_english": "With time, wounds are bound to heal.",
+              "example_urdu": "وقت گزرنے کے ساتھ زخم بھرنا فطری امر ہے۔"
+            },
+            {
+              "korean": "시작이 반이다.",
+              "romanization": "Sijagi ban-ida.",
+              "english": "Starting is half the journey (A good start is half the battle).",
+              "urdu": "آغاز ہی آدھا سفر ہوتا ہے (شروع کرنا ہی آدھی کامیابی ہے)۔",
+              "example_korean": "가는 말이 고와야 오는 말이 곱다.",
+              "example_english": "Speak pleasant words to hear pleasant words in return.",
+              "example_urdu": "میٹھی زبان بولیں گے تو میٹھا جواب پائیں گے (جیسا کہو گے ویسا سنو گے)۔"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does the Korean proverb '시작이 반이다' teach?",
+              "urdu_question": "کورین ضرب المثل '시작이 반이다' کیا سبق دیتی ہے؟",
+              "options": ["Starting is half the battle", "Silence is golden", "Patience has limits", "Money cannot buy time"],
+              "correct_index": 0,
+              "explanation": "시작이 반이다 translates to 'Starting is half the work'."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dictionary": [
+    {
+      "korean": "안녕하세요",
+      "romanization": "Annyeonghaseyo",
+      "english": "Hello / Good day",
+      "urdu": "ہیلو / السلام علیکم",
+      "category": "Greetings",
+      "level": "Beginner"
+    },
+    {
+      "korean": "감사합니다",
+      "romanization": "Gamsahamnida",
+      "english": "Thank you",
+      "urdu": "شکریہ / آپ کا شکریہ",
+      "category": "Politeness",
+      "level": "Beginner"
+    },
+    {
+      "korean": "죄송합니다",
+      "romanization": "Joesonghamnida",
+      "english": "I am sorry",
+      "urdu": "معاف کیجیے گا / معذرت",
+      "category": "Politeness",
+      "level": "Beginner"
+    },
+    {
+      "korean": "친구",
+      "romanization": "Chingu",
+      "english": "Friend",
+      "urdu": "دوست",
+      "category": "People",
+      "level": "Beginner"
+    },
+    {
+      "korean": "선생님",
+      "romanization": "Seonsaengnim",
+      "english": "Teacher",
+      "urdu": "استاد / معلم",
+      "category": "People",
+      "level": "Beginner"
+    },
+    {
+      "korean": "학생",
+      "romanization": "Haksaeng",
+      "english": "Student",
+      "urdu": "طالب علم",
+      "category": "People",
+      "level": "Beginner"
+    },
+    {
+      "korean": "한국",
+      "romanization": "Hanguk",
+      "english": "South Korea",
+      "urdu": "جنوبی کوریا",
+      "category": "Places",
+      "level": "Beginner"
+    },
+    {
+      "korean": "물",
+      "romanization": "Mul",
+      "english": "Water",
+      "urdu": "پانی",
+      "category": "Food & Drink",
+      "level": "Beginner"
+    },
+    {
+      "korean": "밥",
+      "romanization": "Bap",
+      "english": "Cooked rice / Meal",
+      "urdu": "چاول / کھانا",
+      "category": "Food & Drink",
+      "level": "Beginner"
+    },
+    {
+      "korean": "사과",
+      "romanization": "Sagwa",
+      "english": "Apple",
+      "urdu": "سیب",
+      "category": "Food & Drink",
+      "level": "Beginner"
+    },
+    {
+      "korean": "공부하다",
+      "romanization": "Gongbuhada",
+      "english": "To study",
+      "urdu": "پڑھنا / مطالعہ کرنا",
+      "category": "Verbs",
+      "level": "Elementary"
+    },
+    {
+      "korean": "먹다",
+      "romanization": "Meokda",
+      "english": "To eat",
+      "urdu": "کھانا",
+      "category": "Verbs",
+      "level": "Elementary"
+    },
+    {
+      "korean": "가다",
+      "romanization": "Gada",
+      "english": "To go",
+      "urdu": "جانا",
+      "category": "Verbs",
+      "level": "Elementary"
+    },
+    {
+      "korean": "오다",
+      "romanization": "Oda",
+      "english": "To come",
+      "urdu": "آنا",
+      "category": "Verbs",
+      "level": "Elementary"
+    },
+    {
+      "korean": "행복하다",
+      "romanization": "Haengbokhada",
+      "english": "To be happy",
+      "urdu": "خوش ہونا",
+      "category": "Adjectives",
+      "level": "Elementary"
+    },
+    {
+      "korean": "아름답다",
+      "romanization": "Areumdapda",
+      "english": "To be beautiful",
+      "urdu": "خوبصورت ہونا",
+      "category": "Adjectives",
+      "level": "Intermediate"
+    },
+    {
+      "korean": "도서관",
+      "romanization": "Doseogwan",
+      "english": "Library",
+      "urdu": "لائبریری / کتب خانہ",
+      "category": "Places",
+      "level": "Elementary"
+    },
+    {
+      "korean": "지하철",
+      "romanization": "Jihacheol",
+      "english": "Subway / Metro",
+      "urdu": "میٹرو ٹرین",
+      "category": "Travel",
+      "level": "Intermediate"
+    },
+    {
+      "korean": "성공",
+      "romanization": "Seonggong",
+      "english": "Success",
+      "urdu": "کامیابی",
+      "category": "Abstract",
+      "level": "Advanced"
+    },
+    {
+      "korean": "속담",
+      "romanization": "Sokdam",
+      "english": "Proverb / Idiom",
+      "urdu": "کہاوت / ضرب المثل",
+      "category": "Culture",
+      "level": "Advanced"
+    }
+  ]
+}

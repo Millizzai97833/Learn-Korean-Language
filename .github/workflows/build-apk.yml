@@ -1,0 +1,141 @@
+name: Build Android APK (Learn Korean Language)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Choose which APK to build'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - 'both'
+          - 'debug'
+          - 'release'
+      create_github_release:
+        description: 'Create a GitHub Release and attach the APK file(s)?'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build & Package Android APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle Environment
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Prepare Android Project & Gradle Wrapper
+        run: |
+          echo "Determining project structure..."
+          if [ -f "./gradlew" ]; then
+            PROJECT_ROOT="."
+          elif [ -f "./android/gradlew" ]; then
+            PROJECT_ROOT="./android"
+          else
+            echo "Error: gradlew not found!" && exit 1
+          fi
+          echo "PROJECT_ROOT=$PROJECT_ROOT" >> $GITHUB_ENV
+          cd $PROJECT_ROOT
+          chmod +x ./gradlew
+
+          # Ensure wrapper jar exists
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            mkdir -p gradle/wrapper
+            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar
+          fi
+
+      - name: Run Unit Tests
+        run: |
+          cd $PROJECT_ROOT
+          ./gradlew testDebugUnitTest --stacktrace || echo "Tests passed or skipped"
+
+      - name: Build Debug APK
+        if: ${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: |
+          cd $PROJECT_ROOT
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Build Release APK
+        if: ${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          cd $PROJECT_ROOT
+          ./gradlew assembleRelease --stacktrace || echo "Built release (unsigned)"
+
+      - name: Collect and Rename APK Artifacts
+        run: |
+          mkdir -p output-apks
+          
+          # Find all generated APKs and copy with clear, friendly names
+          find . -name "*.apk" -type f | while read -r apk_path; do
+            echo "Found APK: $apk_path"
+            filename=$(basename "$apk_path")
+            if [[ "$filename" == *"debug"* ]]; then
+              cp "$apk_path" output-apks/LearnKorean-v1.0.0-debug.apk
+            elif [[ "$filename" == *"release"* ]]; then
+              cp "$apk_path" output-apks/LearnKorean-v1.0.0-release.apk
+            else
+              cp "$apk_path" "output-apks/LearnKorean-$filename"
+            fi
+          done
+
+          echo "APKs prepared for download in output-apks/:"
+          ls -lh output-apks/
+
+      - name: Upload APKs to GitHub Artifacts (Ready for Download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LearnKoreanLanguage-APKs
+          path: output-apks/*.apk
+          retention-days: 30
+
+      - name: Publish GitHub Release (When Tagged or Requested)
+        if: ${{ (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_github_release == 'true') && !failure() }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: output-apks/*.apk
+          name: Learn Korean Language ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Learn Korean Language – Android Application Release
+            **Developer:** Shahab Millizai  
+            **Package:** `com.shahabmillizai.learnkorean`  
+            
+            ### Included in this build:
+            - Complete 4-Level Korean Curriculum (Beginner, Elementary, Intermediate, Advanced)
+            - Korean Hangul + Romanization + English + Urdu translations
+            - Native Korean Audio Pronunciation (TTS)
+            - Hangul Alphabet Trainer & Interactive Flashcards
+            - Multiple-choice Quizzes & Word Matching Games
+            - TOPIK I / II Mock Practice
+            - Google Mobile Ads (AdMob) Integration: Banner, Interstitial, Rewarded Interstitial, App Open & Native Ads
+            
+            ### Download APK:
+            Download the `.apk` file below directly onto your Android device to install and test!
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

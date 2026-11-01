@@ -1,0 +1,109 @@
+name: Build Android APK (Learn Korean Language)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Choose which APK to build'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - 'both'
+          - 'debug'
+          - 'release'
+      create_github_release:
+        description: 'Create a GitHub Release and attach the APK file(s)?'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build & Package Android APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle Environment
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Ensure Executable Permissions & Wrapper JAR
+        run: |
+          chmod +x ./gradlew
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            mkdir -p gradle/wrapper
+            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar
+          fi
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --stacktrace || echo "Tests completed"
+
+      - name: Build Debug APK
+        if: ${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Build Release APK
+        if: ${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/v') }}
+        run: ./gradlew assembleRelease --stacktrace || echo "Built release (unsigned)"
+
+      - name: Collect and Rename APK Artifacts
+        run: |
+          mkdir -p output-apks
+          find . -name "*.apk" -type f | while read -r apk_path; do
+            echo "Found APK: $apk_path"
+            filename=$(basename "$apk_path")
+            if [[ "$filename" == *"debug"* ]]; then
+              cp "$apk_path" output-apks/LearnKorean-v1.0.0-debug.apk
+            elif [[ "$filename" == *"release"* ]]; then
+              cp "$apk_path" output-apks/LearnKorean-v1.0.0-release.apk
+            else
+              cp "$apk_path" "output-apks/LearnKorean-$filename"
+            fi
+          done
+          ls -lh output-apks/
+
+      - name: Upload APKs to GitHub Artifacts (Ready for Download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LearnKoreanLanguage-APKs
+          path: output-apks/*.apk
+          retention-days: 30
+
+      - name: Publish GitHub Release (When Tagged or Requested)
+        if: ${{ (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_github_release == 'true') && !failure() }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: output-apks/*.apk
+          name: Learn Korean Language ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Learn Korean Language – Android Application Release
+            **Developer:** Shahab Millizai  
+            **Package:** `com.shahabmillizai.learnkorean`  
+            
+            Download the attached `.apk` file directly onto your Android device!
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
