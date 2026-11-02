@@ -41,9 +41,18 @@ jobs:
       - name: Build Debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Build Release APK
+      - name: Restore Release Signing Key
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/learnkorean-release.jks
+          test -s app/learnkorean-release.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: Build Signed Release APK
         run: gradle assembleRelease --stacktrace
-        continue-on-error: true
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
 
       - name: Upload Debug APK Artifact
         if: always()
@@ -55,12 +64,10 @@ jobs:
           retention-days: 14
 
       - name: Upload Release APK Artifact
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: learn-korean-release-apk
-          path: |
-            android/app/build/outputs/apk/release/*.apk
-            android/app/build/outputs/bundle/release/*.aab
-          if-no-files-found: warn
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
           retention-days: 30
