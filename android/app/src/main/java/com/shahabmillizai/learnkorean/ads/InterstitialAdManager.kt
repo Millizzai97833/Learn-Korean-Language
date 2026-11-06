@@ -1,3 +1,4 @@
+
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
@@ -13,6 +14,7 @@ class InterstitialAdManager(
 ) {
     private var interstitialAd: StartAppAd? = null
     private var isLoading = false
+    private var isWaitingForSdk = false
     private var completedLessonCount = 0
 
     private val lessonThreshold = 3
@@ -26,12 +28,26 @@ class InterstitialAdManager(
     }
 
     fun loadAd() {
+        if (!StartIoSdkState.isSdkReady()) {
+            if (!isWaitingForSdk) {
+                isWaitingForSdk = true
+
+                StartIoSdkState.runWhenReady {
+                    isWaitingForSdk = false
+                    loadAd()
+                }
+            }
+            return
+        }
+
         if (isLoading || interstitialAd != null) return
 
         isLoading = true
+
         val newAd = StartAppAd(context.applicationContext)
 
         newAd.loadAd(object : AdEventListener {
+
             override fun onReceiveAd(ad: Ad) {
                 interstitialAd = newAd
                 isLoading = false
@@ -75,6 +91,7 @@ class InterstitialAdManager(
 
         fun finishAd() {
             if (callbackUsed) return
+
             callbackUsed = true
             interstitialAd = null
             completedLessonCount = 0
@@ -83,6 +100,7 @@ class InterstitialAdManager(
         }
 
         ad.showAd(object : AdDisplayListener {
+
             override fun adDisplayed(ad: Ad) {
                 Log.d(TAG, "Start.io interstitial displayed")
             }
