@@ -1,18 +1,35 @@
 
-# Project-specific ProGuard rules
+# ==========================================
+# Start.io SDK ProGuard / R8 Rules
+# ==========================================
 
-# Google Mobile Ads SDK
+# Keep Start.io SDK classes
+-keep class com.startapp.** { *; }
+
+# Keep TrueNet SDK classes
+-keep class com.truenet.** { *; }
+
+# SDK warning suppression
+-dontwarn com.startapp.**
+-dontwarn com.truenet.**
+
+# Preserve reflection and annotation attributes
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+
+# ==========================================
+# Google Mobile Ads
+# ==========================================
+
 -keep public class com.google.android.gms.ads.** {
     public *;
 }
 
 -keep class com.google.android.gms.ads.nativead.** { *; }
 
-# Start.io SDK - protect SDK classes in Release builds
--keep class com.startapp.** { *; }
--dontwarn com.startapp.**
+# ==========================================
+# Gson data models
+# ==========================================
 
-# Keep Gson data models
 -keepclassmembers class com.shahabmillizai.learnkorean.data.model.** {
     <fields>;
 }
@@ -21,7 +38,10 @@
     *;
 }
 
-# Keep ViewModel constructors
+# ==========================================
+# Android ViewModels
+# ==========================================
+
 -keepclassmembers class * extends androidx.lifecycle.ViewModel {
     <init>(...);
 }
