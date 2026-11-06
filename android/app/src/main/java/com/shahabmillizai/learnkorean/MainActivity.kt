@@ -1,3 +1,4 @@
+
 package com.shahabmillizai.learnkorean
 
 import android.os.Bundle
@@ -27,17 +28,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize core offline modules & managers
         val userPreferences = UserPreferences(this)
         repository = KoreanRepository(this, userPreferences)
         ttsManager = KoreanTtsManager(this)
+
         interstitialManager = InterstitialAdManager(this)
         rewardedManager = RewardedInterstitialAdManager(this)
         consentManager = ConsentManager(this)
 
-        // Request Google UMP consent for GDPR compliance where applicable
         consentManager.gatherConsent(this) {
-            // Once consent is processed, preload ads safely
             interstitialManager.loadAd()
             rewardedManager.loadAd()
         }
@@ -60,8 +59,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (::interstitialManager.isInitialized) {
+            interstitialManager.loadAd()
+        }
+
+        if (::rewardedManager.isInitialized) {
+            rewardedManager.loadAd()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        ttsManager.shutdown()
+
+        if (::ttsManager.isInitialized) {
+            ttsManager.shutdown()
+        }
     }
 }
