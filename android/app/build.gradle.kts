@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,11 +21,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "ADMOB_APP_ID", "\"ca-app-pub-2790436784008422~8320873870\"")
         buildConfigField("String", "DEVELOPER_NAME", "\"Shahab Millizai\"")
-
-        manifestPlaceholders["admobAppId"] =
-            "ca-app-pub-2790436784008422~8320873870"
     }
 
     signingConfigs {
@@ -43,16 +38,6 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-
-            manifestPlaceholders["admobAppId"] =
-                "ca-app-pub-3940256099942544~3347511713"
-
-            buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
-            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
-            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/5354046379\"")
-            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-3940256099942544/9257395921\"")
-            buildConfigField("String", "ADMOB_NATIVE_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("Boolean", "IS_TEST_ADS", "true")
         }
 
         release {
@@ -64,13 +49,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-2790436784008422/7007792206\"")
-            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/5419378368\"")
-            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"ca-app-pub-2790436784008422/7366437749\"")
-            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-2790436784008422/1048441408\"")
-            buildConfigField("String", "ADMOB_NATIVE_ID", "\"ca-app-pub-2790436784008422/3681297429\"")
-            buildConfigField("Boolean", "IS_TEST_ADS", "false")
         }
     }
 
@@ -110,8 +88,8 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.play.services.ads)
-    implementation(libs.user.messaging.platform)
+    // Start.io Ads SDK
+    implementation(libs.startio.sdk)
 
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
