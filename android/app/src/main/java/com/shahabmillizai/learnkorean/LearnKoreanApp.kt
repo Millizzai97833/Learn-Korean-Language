@@ -1,7 +1,9 @@
+
 package com.shahabmillizai.learnkorean
 
 import android.app.Application
 import android.util.Log
+import com.shahabmillizai.learnkorean.ads.StartIoSdkState
 import com.startapp.sdk.adsbase.StartAppSDK
 
 class LearnKoreanApp : Application() {
@@ -19,7 +21,8 @@ class LearnKoreanApp : Application() {
         )
             .setReturnAdsEnabled(false)
             .setCallback {
-                Log.d("LearnKoreanApp", "Start.io SDK initialized")
+                Log.d("LearnKoreanApp", "Start.io SDK initialized and ready")
+                StartIoSdkState.markReady()
             }
             .init()
     }
