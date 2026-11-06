@@ -1,4 +1,3 @@
-
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
@@ -9,9 +8,8 @@ import com.startapp.sdk.adsbase.StartAppAd
 import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
 import com.startapp.sdk.adsbase.adlisteners.AdEventListener
 
-class InterstitialAdManager(
-    private val context: Context
-) {
+class InterstitialAdManager(private val context: Context) {
+
     private var interstitialAd: StartAppAd? = null
     private var isLoading = false
     private var isWaitingForSdk = false
@@ -31,7 +29,6 @@ class InterstitialAdManager(
         if (!StartIoSdkState.isSdkReady()) {
             if (!isWaitingForSdk) {
                 isWaitingForSdk = true
-
                 StartIoSdkState.runWhenReady {
                     isWaitingForSdk = false
                     loadAd()
@@ -43,23 +40,30 @@ class InterstitialAdManager(
         if (isLoading || interstitialAd != null) return
 
         isLoading = true
+        Log.d(TAG, "Requesting interstitial")
 
-        val newAd = StartAppAd(context.applicationContext)
+        // Use the Activity context, not applicationContext.
+        val newAd = StartAppAd(context)
 
-        newAd.loadAd(object : AdEventListener {
+        try {
+            newAd.loadAd(object : AdEventListener {
 
-            override fun onReceiveAd(ad: Ad) {
-                interstitialAd = newAd
-                isLoading = false
-                Log.d(TAG, "Start.io interstitial loaded")
-            }
+                override fun onReceiveAd(ad: Ad) {
+                    interstitialAd = newAd
+                    isLoading = false
+                    Log.i(TAG, "Interstitial loaded")
+                }
 
-            override fun onFailedToReceiveAd(ad: Ad?) {
-                interstitialAd = null
-                isLoading = false
-                Log.w(TAG, "Start.io interstitial failed to load")
-            }
-        })
+                override fun onFailedToReceiveAd(ad: Ad?) {
+                    interstitialAd = null
+                    isLoading = false
+                    Log.e(TAG, "Interstitial failed: $ad")
+                }
+            })
+        } catch (e: Exception) {
+            isLoading = false
+            Log.e(TAG, "Interstitial request exception", e)
+        }
     }
 
     fun showIfAllowed(
@@ -82,40 +86,46 @@ class InterstitialAdManager(
         val ad = interstitialAd
 
         if (ad == null) {
+            Log.w(TAG, "Interstitial not ready")
             loadAd()
             onDismissed()
             return
         }
 
-        var callbackUsed = false
+        var finished = false
 
-        fun finishAd() {
-            if (callbackUsed) return
-
-            callbackUsed = true
+        fun finish() {
+            if (finished) return
+            finished = true
             interstitialAd = null
             completedLessonCount = 0
             loadAd()
             onDismissed()
         }
 
-        ad.showAd(object : AdDisplayListener {
+        try {
+            ad.showAd(object : AdDisplayListener {
 
-            override fun adDisplayed(ad: Ad) {
-                Log.d(TAG, "Start.io interstitial displayed")
-            }
+                override fun adDisplayed(ad: Ad) {
+                    Log.i(TAG, "Interstitial displayed")
+                }
 
-            override fun adHidden(ad: Ad) {
-                finishAd()
-            }
+                override fun adHidden(ad: Ad) {
+                    finish()
+                }
 
-            override fun adClicked(ad: Ad) {
-                Log.d(TAG, "Start.io interstitial clicked")
-            }
+                override fun adClicked(ad: Ad) {
+                    Log.d(TAG, "Interstitial clicked")
+                }
 
-            override fun adNotDisplayed(ad: Ad) {
-                finishAd()
-            }
-        })
+                override fun adNotDisplayed(ad: Ad) {
+                    Log.e(TAG, "Interstitial not displayed")
+                    finish()
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Interstitial display exception", e)
+            finish()
+        }
     }
 }
