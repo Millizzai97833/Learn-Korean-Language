@@ -1,20 +1,27 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /Users/.../Library/Android/sdk/tools/proguard/proguard-android.txt
 
-# Google Play Services Ads Proguard Rules
+# Project-specific ProGuard rules
+
+# Google Mobile Ads SDK
 -keep public class com.google.android.gms.ads.** {
-   public *;
+    public *;
 }
 
-# For Google Mobile Ads SDK Native Ads
 -keep class com.google.android.gms.ads.nativead.** { *; }
 
-# Keep data models serialized by Gson
--keepclassmembers class com.shahabmillizai.learnkorean.data.model.** { <fields>; }
--keep class com.shahabmillizai.learnkorean.data.model.** { *; }
+# Start.io SDK - protect SDK classes in Release builds
+-keep class com.startapp.** { *; }
+-dontwarn com.startapp.**
 
-# For Kotlin Coroutines & Jetpack Compose
+# Keep Gson data models
+-keepclassmembers class com.shahabmillizai.learnkorean.data.model.** {
+    <fields>;
+}
+
+-keep class com.shahabmillizai.learnkorean.data.model.** {
+    *;
+}
+
+# Keep ViewModel constructors
 -keepclassmembers class * extends androidx.lifecycle.ViewModel {
     <init>(...);
 }
