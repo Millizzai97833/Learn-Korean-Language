@@ -5,20 +5,18 @@ import android.content.Context
 import android.util.Log
 import com.startapp.sdk.adsbase.Ad
 import com.startapp.sdk.adsbase.StartAppAd
+import com.startapp.sdk.adsbase.VideoListener
 import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
 import com.startapp.sdk.adsbase.adlisteners.AdEventListener
 
-class InterstitialAdManager(
+class RewardedInterstitialAdManager(
     private val context: Context
 ) {
-    private var interstitialAd: StartAppAd? = null
+    private var rewardedAd: StartAppAd? = null
     private var isLoading = false
-    private var completedLessonCount = 0
-
-    private val lessonThreshold = 3
 
     companion object {
-        private const val TAG = "StartIoInterstitial"
+        private const val TAG = "StartIoRewarded"
     }
 
     init {
@@ -26,65 +24,69 @@ class InterstitialAdManager(
     }
 
     fun loadAd() {
-        if (isLoading || interstitialAd != null) return
+        if (isLoading || rewardedAd != null) return
 
         isLoading = true
         val newAd = StartAppAd(context.applicationContext)
 
-        newAd.loadAd(object : AdEventListener {
-            override fun onReceiveAd(ad: Ad) {
-                interstitialAd = newAd
-                isLoading = false
-                Log.d(TAG, "Start.io interstitial loaded")
-            }
+        newAd.loadAd(
+            StartAppAd.AdMode.REWARDED_VIDEO,
+            object : AdEventListener {
+                override fun onReceiveAd(ad: Ad) {
+                    rewardedAd = newAd
+                    isLoading = false
+                    Log.d(TAG, "Start.io rewarded video loaded")
+                }
 
-            override fun onFailedToReceiveAd(ad: Ad?) {
-                interstitialAd = null
-                isLoading = false
-                Log.w(TAG, "Start.io interstitial failed to load")
+                override fun onFailedToReceiveAd(ad: Ad?) {
+                    rewardedAd = null
+                    isLoading = false
+                    Log.w(TAG, "Start.io rewarded video failed to load")
+                }
             }
-        })
+        )
     }
 
-    fun showIfAllowed(
+    val isAdAvailable: Boolean
+        get() = rewardedAd != null
+
+    fun show(
         activity: Activity,
-        isQuizActive: Boolean,
-        onDismissed: () -> Unit
+        onRewardEarned: (rewardType: String, amount: Int) -> Unit,
+        onAdClosed: () -> Unit
     ) {
-        if (isQuizActive) {
-            onDismissed()
-            return
-        }
-
-        completedLessonCount++
-
-        if (completedLessonCount < lessonThreshold) {
-            onDismissed()
-            return
-        }
-
-        val ad = interstitialAd
+        val ad = rewardedAd
 
         if (ad == null) {
             loadAd()
-            onDismissed()
+            onAdClosed()
             return
         }
 
-        var callbackUsed = false
+        var rewardGranted = false
+        var closeCallbackUsed = false
 
         fun finishAd() {
-            if (callbackUsed) return
-            callbackUsed = true
-            interstitialAd = null
-            completedLessonCount = 0
+            if (closeCallbackUsed) return
+            closeCallbackUsed = true
+            rewardedAd = null
             loadAd()
-            onDismissed()
+            onAdClosed()
         }
+
+        ad.setVideoListener(object : VideoListener {
+            override fun onVideoCompleted() {
+                if (!rewardGranted) {
+                    rewardGranted = true
+                    Log.d(TAG, "Rewarded video completed")
+                    onRewardEarned("video_completed", 150)
+                }
+            }
+        })
 
         ad.showAd(object : AdDisplayListener {
             override fun adDisplayed(ad: Ad) {
-                Log.d(TAG, "Start.io interstitial displayed")
+                Log.d(TAG, "Start.io rewarded video displayed")
             }
 
             override fun adHidden(ad: Ad) {
@@ -92,7 +94,7 @@ class InterstitialAdManager(
             }
 
             override fun adClicked(ad: Ad) {
-                Log.d(TAG, "Start.io interstitial clicked")
+                Log.d(TAG, "Start.io rewarded video clicked")
             }
 
             override fun adNotDisplayed(ad: Ad) {
