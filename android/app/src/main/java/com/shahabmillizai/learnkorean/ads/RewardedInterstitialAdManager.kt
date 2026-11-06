@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.startapp.sdk.adsbase.Ad
+import com.startapp.sdk.adsbase.AdMode
 import com.startapp.sdk.adsbase.StartAppAd
 import com.startapp.sdk.adsbase.VideoListener
 import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
@@ -17,6 +18,7 @@ class RewardedInterstitialAdManager(
 
     companion object {
         private const val TAG = "StartIoRewarded"
+        private const val REWARD_AMOUNT = 150
     }
 
     init {
@@ -30,18 +32,19 @@ class RewardedInterstitialAdManager(
         val newAd = StartAppAd(context.applicationContext)
 
         newAd.loadAd(
-            StartAppAd.AdMode.REWARDED_VIDEO,
+            AdMode.REWARDED_VIDEO,
             object : AdEventListener {
+
                 override fun onReceiveAd(ad: Ad) {
                     rewardedAd = newAd
                     isLoading = false
-                    Log.d(TAG, "Start.io rewarded video loaded")
+                    Log.d(TAG, "Rewarded video loaded")
                 }
 
                 override fun onFailedToReceiveAd(ad: Ad?) {
                     rewardedAd = null
                     isLoading = false
-                    Log.w(TAG, "Start.io rewarded video failed to load")
+                    Log.w(TAG, "Rewarded video failed to load")
                 }
             }
         )
@@ -68,6 +71,7 @@ class RewardedInterstitialAdManager(
 
         fun finishAd() {
             if (closeCallbackUsed) return
+
             closeCallbackUsed = true
             rewardedAd = null
             loadAd()
@@ -78,15 +82,21 @@ class RewardedInterstitialAdManager(
             override fun onVideoCompleted() {
                 if (!rewardGranted) {
                     rewardGranted = true
+
                     Log.d(TAG, "Rewarded video completed")
-                    onRewardEarned("video_completed", 150)
+
+                    onRewardEarned(
+                        "video_completed",
+                        REWARD_AMOUNT
+                    )
                 }
             }
         })
 
         ad.showAd(object : AdDisplayListener {
+
             override fun adDisplayed(ad: Ad) {
-                Log.d(TAG, "Start.io rewarded video displayed")
+                Log.d(TAG, "Rewarded video displayed")
             }
 
             override fun adHidden(ad: Ad) {
@@ -94,7 +104,7 @@ class RewardedInterstitialAdManager(
             }
 
             override fun adClicked(ad: Ad) {
-                Log.d(TAG, "Start.io rewarded video clicked")
+                Log.d(TAG, "Rewarded video clicked")
             }
 
             override fun adNotDisplayed(ad: Ad) {
