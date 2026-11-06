@@ -2,35 +2,25 @@ package com.shahabmillizai.learnkorean
 
 import android.app.Application
 import android.util.Log
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
-import com.shahabmillizai.learnkorean.ads.AppOpenAdManager
+import com.startapp.sdk.adsbase.StartAppSDK
 
 class LearnKoreanApp : Application() {
-
-    lateinit var appOpenAdManager: AppOpenAdManager
-        private set
 
     override fun onCreate() {
         super.onCreate()
 
         if (BuildConfig.DEBUG) {
-            val configuration = RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("EMULATOR"))
-                .build()
-
-            MobileAds.setRequestConfiguration(configuration)
+            StartAppSDK.setTestAdsEnabled(true)
         }
 
-        MobileAds.initialize(this) { initializationStatus ->
-            for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
-                Log.d(
-                    "LearnKoreanApp",
-                    "Adapter: $adapterClass, State: ${status.initializationState}"
-                )
+        StartAppSDK.initParams(
+            applicationContext,
+            "210777317"
+        )
+            .setReturnAdsEnabled(false)
+            .setCallback {
+                Log.d("LearnKoreanApp", "Start.io SDK initialized")
             }
-        }
-
-        appOpenAdManager = AppOpenAdManager(this)
+            .init()
     }
 }
