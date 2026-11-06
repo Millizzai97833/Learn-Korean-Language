@@ -1,4 +1,3 @@
-
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
@@ -32,7 +31,6 @@ class RewardedInterstitialAdManager(
         if (!StartIoSdkState.isSdkReady()) {
             if (!isWaitingForSdk) {
                 isWaitingForSdk = true
-
                 StartIoSdkState.runWhenReady {
                     isWaitingForSdk = false
                     loadAd()
@@ -44,26 +42,33 @@ class RewardedInterstitialAdManager(
         if (isLoading || rewardedAd != null) return
 
         isLoading = true
+        Log.d(TAG, "Requesting rewarded video")
 
-        val newAd = StartAppAd(context.applicationContext)
+        // Use the Activity context.
+        val newAd = StartAppAd(context)
 
-        newAd.loadAd(
-            AdMode.REWARDED_VIDEO,
-            object : AdEventListener {
+        try {
+            newAd.loadAd(
+                AdMode.REWARDED_VIDEO,
+                object : AdEventListener {
 
-                override fun onReceiveAd(ad: Ad) {
-                    rewardedAd = newAd
-                    isLoading = false
-                    Log.d(TAG, "Start.io rewarded video loaded")
+                    override fun onReceiveAd(ad: Ad) {
+                        rewardedAd = newAd
+                        isLoading = false
+                        Log.i(TAG, "Rewarded video loaded")
+                    }
+
+                    override fun onFailedToReceiveAd(ad: Ad?) {
+                        rewardedAd = null
+                        isLoading = false
+                        Log.e(TAG, "Rewarded video failed: $ad")
+                    }
                 }
-
-                override fun onFailedToReceiveAd(ad: Ad?) {
-                    rewardedAd = null
-                    isLoading = false
-                    Log.w(TAG, "Start.io rewarded video failed to load")
-                }
-            }
-        )
+            )
+        } catch (e: Exception) {
+            isLoading = false
+            Log.e(TAG, "Rewarded request exception", e)
+        }
     }
 
     val isAdAvailable: Boolean
@@ -77,56 +82,61 @@ class RewardedInterstitialAdManager(
         val ad = rewardedAd
 
         if (ad == null) {
+            Log.w(TAG, "Rewarded video is not ready")
             loadAd()
             onAdClosed()
             return
         }
 
         var rewardGranted = false
-        var closeCallbackUsed = false
+        var finished = false
 
-        fun finishAd() {
-            if (closeCallbackUsed) return
-
-            closeCallbackUsed = true
+        fun finish() {
+            if (finished) return
+            finished = true
             rewardedAd = null
             loadAd()
             onAdClosed()
         }
 
-        ad.setVideoListener(object : VideoListener {
+        try {
+            ad.setVideoListener(object : VideoListener {
 
-            override fun onVideoCompleted() {
-                if (!rewardGranted) {
-                    rewardGranted = true
+                override fun onVideoCompleted() {
+                    if (!rewardGranted) {
+                        rewardGranted = true
+                        Log.i(TAG, "Rewarded video completed")
 
-                    Log.d(TAG, "Start.io rewarded video completed")
-
-                    onRewardEarned(
-                        "video_completed",
-                        REWARD_AMOUNT
-                    )
+                        onRewardEarned(
+                            "video_completed",
+                            REWARD_AMOUNT
+                        )
+                    }
                 }
-            }
-        })
+            })
 
-        ad.showAd(object : AdDisplayListener {
+            ad.showAd(object : AdDisplayListener {
 
-            override fun adDisplayed(ad: Ad) {
-                Log.d(TAG, "Start.io rewarded video displayed")
-            }
+                override fun adDisplayed(ad: Ad) {
+                    Log.i(TAG, "Rewarded video displayed")
+                }
 
-            override fun adHidden(ad: Ad) {
-                finishAd()
-            }
+                override fun adHidden(ad: Ad) {
+                    finish()
+                }
 
-            override fun adClicked(ad: Ad) {
-                Log.d(TAG, "Start.io rewarded video clicked")
-            }
+                override fun adClicked(ad: Ad) {
+                    Log.d(TAG, "Rewarded video clicked")
+                }
 
-            override fun adNotDisplayed(ad: Ad) {
-                finishAd()
-            }
-        })
+                override fun adNotDisplayed(ad: Ad) {
+                    Log.e(TAG, "Rewarded video not displayed")
+                    finish()
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Rewarded display exception", e)
+            finish()
+        }
     }
 }
