@@ -1,11 +1,12 @@
+
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.startapp.sdk.adsbase.Ad
-import com.startapp.sdk.adsbase.AdMode
 import com.startapp.sdk.adsbase.StartAppAd
+import com.startapp.sdk.adsbase.StartAppAd.AdMode
 import com.startapp.sdk.adsbase.VideoListener
 import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
 import com.startapp.sdk.adsbase.adlisteners.AdEventListener
@@ -13,6 +14,7 @@ import com.startapp.sdk.adsbase.adlisteners.AdEventListener
 class RewardedInterstitialAdManager(
     private val context: Context
 ) {
+
     private var rewardedAd: StartAppAd? = null
     private var isLoading = false
 
@@ -29,6 +31,7 @@ class RewardedInterstitialAdManager(
         if (isLoading || rewardedAd != null) return
 
         isLoading = true
+
         val newAd = StartAppAd(context.applicationContext)
 
         newAd.loadAd(
@@ -79,6 +82,7 @@ class RewardedInterstitialAdManager(
         }
 
         ad.setVideoListener(object : VideoListener {
+
             override fun onVideoCompleted() {
                 if (!rewardGranted) {
                     rewardGranted = true
