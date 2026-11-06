@@ -1,9 +1,9 @@
+
 package com.shahabmillizai.learnkorean.ads
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.startapp.sdk.ads.banner.Banner
@@ -12,10 +12,16 @@ import com.startapp.sdk.ads.banner.Banner
 fun BannerAdView(
     modifier: Modifier = Modifier
 ) {
-    AndroidView(
-        modifier = modifier.fillMaxWidth(),
-        factory = { context ->
-            Banner(context)
+    if (StartIoSdkState.isReady) {
+        Box(
+            modifier = modifier.fillMaxWidth()
+        ) {
+            AndroidView(
+                modifier = Modifier.fillMaxWidth(),
+                factory = { context ->
+                    Banner(context)
+                }
+            )
         }
-    )
+    }
 }
