@@ -31,31 +31,17 @@ jobs:
         with:
           gradle-version: '8.11.1'
 
-      - name: Prepare Android Gradle Wrapper
+      - name: Verify Gradle
         working-directory: android
-        shell: bash
-        run: |
-          set -e
-          mkdir -p gradle/wrapper
-
-          curl -fL --retry 3 \
-            -o gradle/wrapper/gradle-wrapper.jar \
-            https://raw.githubusercontent.com/gradle/gradle/v8.11.1/gradle/wrapper/gradle-wrapper.jar
-
-          test -s gradle/wrapper/gradle-wrapper.jar
-          unzip -t gradle/wrapper/gradle-wrapper.jar
-
-          chmod +x gradlew
-          java -classpath gradle/wrapper/gradle-wrapper.jar \
-            org.gradle.wrapper.GradleWrapperMain --version
+        run: gradle --version
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
       - name: Build Release APK
         working-directory: android
-        run: ./gradlew assembleRelease --stacktrace
+        run: gradle assembleRelease --stacktrace
 
       - name: Upload Debug APK
         if: always()
