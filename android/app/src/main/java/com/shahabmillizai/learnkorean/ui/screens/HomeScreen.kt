@@ -2,9 +2,10 @@
 package com.shahabmillizai.learnkorean.ui.screens
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +13,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +36,14 @@ import com.shahabmillizai.learnkorean.ui.theme.TaegeukBlue
 import com.shahabmillizai.learnkorean.ui.theme.TaegeukRed
 import com.shahabmillizai.learnkorean.ui.theme.UrduEmerald
 
+private tailrec fun Context.findActivity(): Activity? {
+    return when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
+}
+
 @Composable
 fun HomeScreen(
     repository: KoreanRepository,
@@ -40,12 +53,14 @@ fun HomeScreen(
     onNavigateToPractice: () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+
     val progress by repository.userPreferences.progressFlow.collectAsState()
     val levels = remember { repository.getLevels() }
 
     var showRewardDialog by remember { mutableStateOf(false) }
-    var rewardMessage by remember { mutableStateOf("") }
     var showRewardMessage by remember { mutableStateOf(false) }
+    var rewardMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -59,7 +74,6 @@ fun HomeScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header stats: Streak & XP
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -70,8 +84,7 @@ fun HomeScreen(
                         Text(
                             text = "Learn Korean",
                             style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
+                            fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "By Shahab Millizai",
@@ -80,85 +93,53 @@ fun HomeScreen(
                         )
                     }
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = TaegeukRed.copy(alpha = 0.12f),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TaegeukRed.copy(alpha = 0.3f)
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(
-                                    horizontal = 10.dp,
-                                    vertical = 6.dp
-                                ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.LocalFireDepartment,
-                                    contentDescription = "Streak",
-                                    tint = TaegeukRed,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = "${progress.streakDays}d Streak",
-                                    color = TaegeukRed,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
-                            }
+                            Icon(
+                                Icons.Default.LocalFireDepartment,
+                                contentDescription = "Streak",
+                                tint = TaegeukRed,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                "${progress.streakDays}d Streak",
+                                color = TaegeukRed,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
                         }
 
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = TaegeukBlue.copy(alpha = 0.12f),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TaegeukBlue.copy(alpha = 0.3f)
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(
-                                    horizontal = 10.dp,
-                                    vertical = 6.dp
-                                ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Bolt,
-                                    contentDescription = "XP",
-                                    tint = TaegeukBlue,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = "${progress.xp} XP",
-                                    color = TaegeukBlue,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
-                            }
+                            Icon(
+                                Icons.Default.Bolt,
+                                contentDescription = "XP",
+                                tint = TaegeukBlue,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                "${progress.xp} XP",
+                                color = TaegeukBlue,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
                         }
                     }
                 }
             }
 
-            // Word of the Day
             item {
-                Surface(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant
-                    )
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(18.dp),
@@ -170,147 +151,108 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "DAILY WORD OF THE DAY",
-                                style = MaterialTheme.typography.labelSmall,
+                                "DAILY WORD OF THE DAY",
+                                color = TaegeukBlue,
                                 fontWeight = FontWeight.Bold,
-                                color = TaegeukBlue
+                                fontSize = 12.sp
                             )
 
                             IconButton(
                                 onClick = {
                                     ttsManager.speakKorean("안녕하세요")
-                                },
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(TaegeukBlue.copy(alpha = 0.1f))
+                                }
                             ) {
                                 Icon(
                                     Icons.Default.VolumeUp,
                                     contentDescription = "Listen",
-                                    tint = TaegeukBlue,
-                                    modifier = Modifier.size(20.dp)
+                                    tint = TaegeukBlue
                                 )
                             }
                         }
 
                         Text(
-                            text = "안녕하세요",
+                            "안녕하세요",
                             fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            fontWeight = FontWeight.Bold
                         )
 
                         Text(
-                            text = "Annyeonghaseyo",
+                            "Annyeonghaseyo",
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        HorizontalDivider()
+
+                        Text(
+                            "English: Hello / Peace be with you",
+                            fontSize = 14.sp
+                        )
+
+                        Text(
+                            "اردو: ہیلو / السلام علیکم",
+                            color = UrduEmerald,
                             fontSize = 15.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            fontWeight = FontWeight.SemiBold
                         )
-
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column {
-                                Text(
-                                    text = "English",
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                )
-                                Text(
-                                    text = "Hello / Peace be with you",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    text = "اردو ترجمہ",
-                                    fontSize = 11.sp,
-                                    color = UrduEmerald
-                                )
-                                Text(
-                                    text = "ہیلو / السلام علیکم",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = UrduEmerald
-                                )
-                            }
-                        }
                     }
                 }
             }
 
-            // Hangul Trainer
             item {
-                Surface(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onNavigateToPractice() },
                     shape = RoundedCornerShape(16.dp),
-                    color = TaegeukRed.copy(alpha = 0.08f),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TaegeukRed.copy(alpha = 0.25f)
+                    colors = CardDefaults.cardColors(
+                        containerColor = TaegeukRed.copy(alpha = 0.08f)
                     )
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(44.dp)
+                                .size(46.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(TaegeukRed),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "한",
+                                "한",
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Hangul Alphabet Trainer",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                "Hangul Alphabet Trainer",
+                                fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Practice consonants & vowels with audio",
-                                fontSize = 13.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                "Practice Korean consonants and vowels",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
                         Icon(
                             Icons.Default.ChevronRight,
-                            contentDescription = null,
-                            tint = TaegeukRed
+                            contentDescription = "Open practice"
                         )
                     }
                 }
             }
 
-            // Rewarded Ad Bonus Pack
             item {
-                Surface(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant
-                    )
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
@@ -319,7 +261,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             Icons.Default.CardGiftcard,
-                            contentDescription = null,
+                            contentDescription = "Bonus reward",
                             tint = TaegeukBlue,
                             modifier = Modifier.size(32.dp)
                         )
@@ -337,12 +279,12 @@ fun HomeScreen(
 
                             Text(
                                 text = if (progress.isBonusPackUnlocked) {
-                                    "You have unlocked +150 XP and premium phrases."
+                                    "You unlocked the bonus pack and earned 150 XP."
                                 } else {
-                                    "Watch a short ad to earn +150 XP & bonus phrases."
+                                    "Watch a rewarded video to earn 150 XP and bonus phrases."
                                 },
                                 fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -353,36 +295,25 @@ fun HomeScreen(
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = TaegeukBlue
-                                ),
-                                contentPadding = PaddingValues(
-                                    horizontal = 12.dp,
-                                    vertical = 6.dp
                                 )
                             ) {
-                                Text(
-                                    text = "Unlock",
-                                    fontSize = 12.sp
-                                )
+                                Text("Unlock")
                             }
                         }
                     }
                 }
             }
 
-            // Curriculum heading
             item {
                 Text(
-                    text = "Core Curriculum (4 Levels)",
-                    style = MaterialTheme.typography.titleMedium,
+                    "Core Curriculum (4 Levels)",
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            // Curriculum levels
-            items(levels.size) { index ->
-                val level = levels[index]
-
-                Surface(
+            items(levels) { level ->
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -390,12 +321,7 @@ fun HomeScreen(
                                 level.lessons.firstOrNull()?.id ?: "beg_01"
                             )
                         },
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant
-                    )
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -407,46 +333,45 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = level.name,
+                                level.name,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
+
                             Text(
-                                text = level.koreanName,
+                                level.koreanName,
                                 color = TaegeukRed,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
+                                fontWeight = FontWeight.Bold
                             )
                         }
 
                         Text(
-                            text = level.urduName,
+                            level.urduName,
                             color = UrduEmerald,
                             fontSize = 13.sp
                         )
 
                         Text(
-                            text = level.description,
+                            level.description,
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "${level.lessons.size} structured lessons",
+                                "${level.lessons.size} structured lessons",
                                 fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
                             Text(
-                                text = "Start Lesson →",
+                                "Start Lesson →",
                                 color = TaegeukBlue,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
                             )
                         }
                     }
@@ -458,11 +383,92 @@ fun HomeScreen(
         BannerAdView()
     }
 
-    // Rewarded video confirmation
+    // Rewarded video confirmation dialog
     if (showRewardDialog) {
         AlertDialog(
             onDismissRequest = {
                 showRewardDialog = false
             },
             title = {
-                Text("Unlock Bonus Vo
+                Text("Unlock Bonus Vocabulary Pack")
+            },
+            text = {
+                Text(
+                    "Watch a rewarded video to unlock 150 XP " +
+                        "and bonus TOPIK vocabulary."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showRewardDialog = false
+
+                        if (activity == null) {
+                            rewardMessage =
+                                "Unable to open the ad. Please try again."
+                            showRewardMessage = true
+                        } else {
+                            rewardedManager.show(
+                                activity = activity,
+                                onRewardEarned = { _, amount ->
+                                    repository.userPreferences.unlockBonusPack()
+
+                                    rewardMessage =
+                                        "Congratulations! You earned $amount XP and unlocked the bonus pack."
+
+                                    showRewardMessage = true
+                                },
+                                onAdClosed = {
+                                    Log.i(
+                                        "HomeScreen",
+                                        "Rewarded ad closed"
+                                    )
+                                },
+                                onAdNotReady = {
+                                    rewardMessage =
+                                        "No rewarded ad is ready right now. Please try again later."
+                                    showRewardMessage = true
+                                }
+                            )
+                        }
+                    }
+                ) {
+                    Text("Watch Ad")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showRewardDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // Reward result dialog
+    if (showRewardMessage) {
+        AlertDialog(
+            onDismissRequest = {
+                showRewardMessage = false
+            },
+            title = {
+                Text("Reward Status")
+            },
+            text = {
+                Text(rewardMessage)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRewardMessage = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+}
