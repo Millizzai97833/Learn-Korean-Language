@@ -1,6 +1,8 @@
+
 package com.shahabmillizai.learnkorean.ui.screens
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +41,10 @@ fun HomeScreen(
     val context = LocalContext.current
     val progress by repository.userPreferences.progressFlow.collectAsState()
     val levels = remember { repository.getLevels() }
+
     var showRewardDialog by remember { mutableStateOf(false) }
+    var rewardMessage by remember { mutableStateOf("") }
+    var showRewardMessage by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -342,7 +347,9 @@ fun HomeScreen(
 
                         if (!progress.isBonusPackUnlocked) {
                             Button(
-                                onClick = { showRewardDialog = true },
+                                onClick = {
+                                    showRewardDialog = true
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = TaegeukBlue
                                 ),
@@ -457,46 +464,6 @@ fun HomeScreen(
                 showRewardDialog = false
             },
             title = {
-                Text(text = "Unlock Bonus Vocab Pack?")
+                Text("Unlock Bonus Vocab Pack?")
             },
-            text = {
-                Text(
-                    text = "Watch a sponsored video to unlock bonus TOPIK " +
-                        "phrases and earn +150 XP. The reward is granted " +
-                        "only after the video completes."
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showRewardDialog = false
-
-                        (context as? Activity)?.let { activity ->
-                            rewardedManager.show(
-                                activity = activity,
-                                onRewardEarned = { _, _ ->
-                                    repository.userPreferences.unlockBonusPack()
-                                },
-                                onAdClosed = {}
-                            )
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = TaegeukBlue
-                    )
-                ) {
-                    Text("Watch Ad & Unlock")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showRewardDialog = false
-                    }
-                ) {
-                    Text("Maybe Later")
-                }
-            }
-        )
-    }
-}
+            text = 
