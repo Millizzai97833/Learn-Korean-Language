@@ -17,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
 import com.shahabmillizai.learnkorean.ads.AdConfig
 import com.shahabmillizai.learnkorean.ads.ConsentManager
 import com.shahabmillizai.learnkorean.ads.InterstitialAdManager
@@ -74,9 +76,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(
-                                    androidx.compose.ui.unit.dp(12)
-                                )
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 CircularProgressIndicator()
                                 Text("Preparing Learn Korean...")
@@ -87,7 +87,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Consent is collected before Start.io initialization.
         consentManager.gatherConsent(this) {
             initializeStartIo()
         }
@@ -100,7 +99,6 @@ class MainActivity : ComponentActivity() {
         sdkInitializationStarted = true
 
         try {
-            // Test ads are enabled only in debug builds.
             if (BuildConfig.DEBUG) {
                 StartAppSDK.setTestAdsEnabled(true)
             }
@@ -119,12 +117,9 @@ class MainActivity : ComponentActivity() {
                 }
                 .init()
 
-            // Managers are created only after the user's
-            // consent choice has been submitted.
             interstitialManager = InterstitialAdManager(this)
             rewardedManager = RewardedInterstitialAdManager(this)
 
-            // Show the learning app even while ads are loading.
             adsReady = true
 
         } catch (e: Exception) {
@@ -134,7 +129,6 @@ class MainActivity : ComponentActivity() {
                 e
             )
 
-            // Keep the learning app usable if ads fail.
             StartIoSdkState.markReady()
             interstitialManager = InterstitialAdManager(this)
             rewardedManager = RewardedInterstitialAdManager(this)
