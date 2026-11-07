@@ -4,18 +4,30 @@ package com.shahabmillizai.learnkorean
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.shahabmillizai.learnkorean.ads.AdConfig
 import com.shahabmillizai.learnkorean.ads.ConsentManager
 import com.shahabmillizai.learnkorean.ads.InterstitialAdManager
 import com.shahabmillizai.learnkorean.ads.RewardedInterstitialAdManager
+import com.shahabmillizai.learnkorean.ads.StartIoSdkState
 import com.shahabmillizai.learnkorean.data.local.UserPreferences
 import com.shahabmillizai.learnkorean.data.repository.KoreanRepository
 import com.shahabmillizai.learnkorean.tts.KoreanTtsManager
 import com.shahabmillizai.learnkorean.ui.navigation.MainAppNavigation
 import com.shahabmillizai.learnkorean.ui.theme.LearnKoreanTheme
+import com.startapp.sdk.adsbase.StartAppSDK
 
 class MainActivity : ComponentActivity() {
 
@@ -25,21 +37,21 @@ class MainActivity : ComponentActivity() {
     private lateinit var rewardedManager: RewardedInterstitialAdManager
     private lateinit var repository: KoreanRepository
 
+    private var adsReady by mutableStateOf(false)
+    private var sdkInitializationStarted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val userPreferences = UserPreferences(this)
-        repository = KoreanRepository(this, userPreferences)
+
+        repository = KoreanRepository(
+            this,
+            userPreferences
+        )
+
         ttsManager = KoreanTtsManager(this)
-
-        interstitialManager = InterstitialAdManager(this)
-        rewardedManager = RewardedInterstitialAdManager(this)
         consentManager = ConsentManager(this)
-
-        consentManager.gatherConsent(this) {
-            interstitialManager.loadAd()
-            rewardedManager.loadAd()
-        }
 
         setContent {
             LearnKoreanTheme {
@@ -47,15 +59,86 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainAppNavigation(
-                        repository = repository,
-                        ttsManager = ttsManager,
-                        interstitialManager = interstitialManager,
-                        rewardedManager = rewardedManager,
-                        consentManager = consentManager
-                    )
+                    if (adsReady) {
+                        MainAppNavigation(
+                            repository = repository,
+                            ttsManager = ttsManager,
+                            interstitialManager = interstitialManager,
+                            rewardedManager = rewardedManager,
+                            consentManager = consentManager
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(
+                                    androidx.compose.ui.unit.dp(12)
+                                )
+                            ) {
+                                CircularProgressIndicator()
+                                Text("Preparing Learn Korean...")
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        // Consent is collected before Start.io initialization.
+        consentManager.gatherConsent(this) {
+            initializeStartIo()
+        }
+    }
+
+    private fun initializeStartIo() {
+        if (sdkInitializationStarted) return
+        if (isFinishing || isDestroyed) return
+
+        sdkInitializationStarted = true
+
+        try {
+            // Test ads are enabled only in debug builds.
+            if (BuildConfig.DEBUG) {
+                StartAppSDK.setTestAdsEnabled(true)
+            }
+
+            StartAppSDK.initParams(
+                applicationContext,
+                AdConfig.START_IO_APP_ID
+            )
+                .setReturnAdsEnabled(false)
+                .setCallback {
+                    StartIoSdkState.markReady()
+                    android.util.Log.i(
+                        "LearnKorean",
+                        "Start.io SDK initialized successfully"
+                    )
+                }
+                .init()
+
+            // Managers are created only after the user's
+            // consent choice has been submitted.
+            interstitialManager = InterstitialAdManager(this)
+            rewardedManager = RewardedInterstitialAdManager(this)
+
+            // Show the learning app even while ads are loading.
+            adsReady = true
+
+        } catch (e: Exception) {
+            android.util.Log.e(
+                "LearnKorean",
+                "Start.io initialization error",
+                e
+            )
+
+            // Keep the learning app usable if ads fail.
+            StartIoSdkState.markReady()
+            interstitialManager = InterstitialAdManager(this)
+            rewardedManager = RewardedInterstitialAdManager(this)
+            adsReady = true
         }
     }
 
