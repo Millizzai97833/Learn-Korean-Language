@@ -4,8 +4,7 @@ package com.shahabmillizai.learnkorean.ads
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.util.Log
 import com.startapp.sdk.adsbase.StartAppSDK
 
 class ConsentManager(context: Context) {
@@ -18,23 +17,21 @@ class ConsentManager(context: Context) {
     )
 
     companion object {
-        private const val KEY_CONSENT_SAVED = "consent_saved"
-        private const val KEY_PERSONALIZED_ADS = "personalized_ads"
-        private const val KEY_CONSENT_TIME = "consent_time"
-
-        private const val PRIVACY_POLICY =
-            "https://www.start.io/policy/privacy-policy/"
+        private const val TAG = "StartIoConsent"
+        private const val KEY_SAVED = "consent_saved"
+        private const val KEY_PERSONALIZED = "personalized_ads"
+        private const val KEY_TIMESTAMP = "consent_timestamp"
     }
 
     val canRequestAds: Boolean
-        get() = preferences.getBoolean(KEY_CONSENT_SAVED, false)
+        get() = preferences.getBoolean(KEY_SAVED, false)
 
     val isPrivacyOptionsRequired: Boolean
         get() = true
 
     private fun applyConsent(granted: Boolean) {
         val timestamp = preferences.getLong(
-            KEY_CONSENT_TIME,
+            KEY_TIMESTAMP,
             System.currentTimeMillis()
         )
 
@@ -45,37 +42,30 @@ class ConsentManager(context: Context) {
                 timestamp,
                 granted
             )
-        } catch (exception: Exception) {
-            android.util.Log.e(
-                "StartIoConsent",
-                "Could not apply consent",
-                exception
-            )
+
+            Log.i(TAG, "Consent submitted: $granted")
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not submit consent", e)
         }
     }
 
     private fun saveConsent(granted: Boolean) {
         preferences.edit()
-            .putBoolean(KEY_CONSENT_SAVED, true)
-            .putBoolean(KEY_PERSONALIZED_ADS, granted)
-            .putLong(KEY_CONSENT_TIME, System.currentTimeMillis())
+            .putBoolean(KEY_SAVED, true)
+            .putBoolean(KEY_PERSONALIZED, granted)
+            .putLong(KEY_TIMESTAMP, System.currentTimeMillis())
             .apply()
 
         applyConsent(granted)
-
-        android.util.Log.i(
-            "StartIoConsent",
-            "User consent saved: $granted"
-        )
     }
 
     fun gatherConsent(
         activity: Activity,
         onConsentGathered: () -> Unit
     ) {
-        if (preferences.getBoolean(KEY_CONSENT_SAVED, false)) {
+        if (preferences.getBoolean(KEY_SAVED, false)) {
             val granted = preferences.getBoolean(
-                KEY_PERSONALIZED_ADS,
+                KEY_PERSONALIZED,
                 false
             )
 
@@ -85,6 +75,13 @@ class ConsentManager(context: Context) {
         }
 
         showConsentDialog(activity, onConsentGathered)
+    }
+
+    fun showPrivacyOptionsForm(
+        activity: Activity,
+        onComplete: () -> Unit
+    ) {
+        showConsentDialog(activity, onComplete)
     }
 
     private fun showConsentDialog(
@@ -105,55 +102,28 @@ class ConsentManager(context: Context) {
             onComplete()
         }
 
-        val dialog = AlertDialog.Builder(activity)
-            .setTitle("Your Privacy Choices")
+        AlertDialog.Builder(activity)
+            .setTitle("Advertising Privacy Choices")
             .setMessage(
-                "Learn Korean uses Start.io advertising services.\n\n" +
-                "You can allow or decline personalized advertising.\n\n" +
-                "If you decline, advertisements may still appear, " +
-                "but they may be less relevant.\n\n" +
-                "Start.io Privacy Policy:\n$PRIVACY_POLICY"
+                "Learn Korean Language uses Start.io advertising.\n\n" +
+                "Start.io may process information such as device " +
+                "identifiers, IP address, device information and " +
+                "other information described in its privacy policy.\n\n" +
+                "Choose whether to allow personalized advertising. " +
+                "If you decline, non-personalized or contextual ads " +
+                "may still be available.\n\n" +
+                "Privacy policy:\n" +
+                "https://www.start.io/policy/privacy-policy/"
             )
-            .setPositiveButton("Allow") { _, _ ->
+            .setPositiveButton("Allow Personalized Ads") { _, _ ->
                 finish(true)
             }
-            .setNegativeButton("Decline") { _, _ ->
+            .setNegativeButton("Continue Without Personalized Ads") { _, _ ->
                 finish(false)
-            }
-            .setNeutralButton("Privacy Policy") { _, _ ->
-                try {
-                    activity.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(PRIVACY_POLICY)
-                        )
-                    )
-                } catch (exception: Exception) {
-                    android.util.Log.e(
-                        "StartIoConsent",
-                        "Could not open privacy policy",
-                        exception
-                    )
-                }
             }
             .setOnCancelListener {
                 finish(false)
             }
-            .create()
-
-        dialog.setOnDismissListener {
-            if (!completed) {
-                finish(false)
-            }
-        }
-
-        dialog.show()
-    }
-
-    fun showPrivacyOptionsForm(
-        activity: Activity,
-        onComplete: () -> Unit
-    ) {
-        showConsentDialog(activity, onComplete)
+            .show()
     }
 }
