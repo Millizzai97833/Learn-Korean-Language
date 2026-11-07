@@ -1,3 +1,4 @@
+
 name: Build Android APK - Learn Korean Language
 
 on:
@@ -25,10 +26,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.11.1
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.9'
+          gradle-version: '8.11.1'
 
       - name: Prepare Android Gradle Wrapper
         working-directory: android
@@ -39,7 +40,7 @@ jobs:
 
           curl -fL --retry 3 \
             -o gradle/wrapper/gradle-wrapper.jar \
-            https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar
+            https://raw.githubusercontent.com/gradle/gradle/v8.11.1/gradle/wrapper/gradle-wrapper.jar
 
           test -s gradle/wrapper/gradle-wrapper.jar
           unzip -t gradle/wrapper/gradle-wrapper.jar
