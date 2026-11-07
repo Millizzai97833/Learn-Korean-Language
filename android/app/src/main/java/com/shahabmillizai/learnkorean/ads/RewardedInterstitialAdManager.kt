@@ -1,3 +1,4 @@
+
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
@@ -13,7 +14,6 @@ import com.startapp.sdk.adsbase.adlisteners.AdEventListener
 class RewardedInterstitialAdManager(
     private val context: Context
 ) {
-
     private var rewardedAd: StartAppAd? = null
     private var isLoading = false
     private var isWaitingForSdk = false
@@ -42,49 +42,51 @@ class RewardedInterstitialAdManager(
         if (isLoading || rewardedAd != null) return
 
         isLoading = true
-        Log.d(TAG, "Requesting rewarded video")
+        Log.i(TAG, "Requesting rewarded video")
 
-        // Use the Activity context.
         val newAd = StartAppAd(context)
 
         try {
             newAd.loadAd(
                 AdMode.REWARDED_VIDEO,
                 object : AdEventListener {
-
                     override fun onReceiveAd(ad: Ad) {
                         rewardedAd = newAd
                         isLoading = false
-                        Log.i(TAG, "Rewarded video loaded")
+                        Log.i(TAG, "Rewarded video loaded successfully")
                     }
 
                     override fun onFailedToReceiveAd(ad: Ad?) {
                         rewardedAd = null
                         isLoading = false
-                        Log.e(TAG, "Rewarded video failed: $ad")
+                        Log.e(TAG, "Rewarded video failed to load: $ad")
                     }
                 }
             )
         } catch (e: Exception) {
             isLoading = false
-            Log.e(TAG, "Rewarded request exception", e)
+            Log.e(TAG, "Rewarded load exception", e)
         }
     }
 
     val isAdAvailable: Boolean
         get() = rewardedAd != null
 
+    val isAdLoading: Boolean
+        get() = isLoading
+
     fun show(
         activity: Activity,
         onRewardEarned: (rewardType: String, amount: Int) -> Unit,
-        onAdClosed: () -> Unit
+        onAdClosed: () -> Unit,
+        onAdNotReady: () -> Unit
     ) {
         val ad = rewardedAd
 
         if (ad == null) {
-            Log.w(TAG, "Rewarded video is not ready")
+            Log.w(TAG, "No rewarded video available. Requesting another ad.")
             loadAd()
-            onAdClosed()
+            onAdNotReady()
             return
         }
 
@@ -101,7 +103,6 @@ class RewardedInterstitialAdManager(
 
         try {
             ad.setVideoListener(object : VideoListener {
-
                 override fun onVideoCompleted() {
                     if (!rewardGranted) {
                         rewardGranted = true
@@ -116,12 +117,12 @@ class RewardedInterstitialAdManager(
             })
 
             ad.showAd(object : AdDisplayListener {
-
                 override fun adDisplayed(ad: Ad) {
                     Log.i(TAG, "Rewarded video displayed")
                 }
 
                 override fun adHidden(ad: Ad) {
+                    Log.i(TAG, "Rewarded video closed")
                     finish()
                 }
 
@@ -130,7 +131,7 @@ class RewardedInterstitialAdManager(
                 }
 
                 override fun adNotDisplayed(ad: Ad) {
-                    Log.e(TAG, "Rewarded video not displayed")
+                    Log.e(TAG, "Rewarded video could not be displayed")
                     finish()
                 }
             })
