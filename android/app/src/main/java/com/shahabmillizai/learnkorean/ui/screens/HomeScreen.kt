@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shahabmillizai.learnkorean.ads.BannerAdView
+import com.shahabmillizai.learnkorean.ads.StartIoBannerSize
 import com.shahabmillizai.learnkorean.ads.RewardedInterstitialAdManager
 import com.shahabmillizai.learnkorean.data.repository.KoreanRepository
 import com.shahabmillizai.learnkorean.tts.KoreanTtsManager
@@ -379,8 +380,8 @@ fun HomeScreen(
             }
         }
 
-        // Start.io banner ad
-        BannerAdView()
+        // Large, tall Start.io MREC banner placement at the bottom of the Home screen
+        BannerAdView(bannerSize = StartIoBannerSize.LARGE_MREC)
     }
 
     // Rewarded video confirmation dialog

@@ -1,4 +1,3 @@
-
 package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
@@ -11,6 +10,10 @@ import com.startapp.sdk.adsbase.VideoListener
 import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
 import com.startapp.sdk.adsbase.adlisteners.AdEventListener
 
+/**
+ * Manages loading and displaying Start.io Rewarded Video ads.
+ * Ad requests are strictly deferred until StartIoSdkState confirms SDK readiness.
+ */
 class RewardedInterstitialAdManager(
     private val context: Context
 ) {
@@ -19,18 +22,21 @@ class RewardedInterstitialAdManager(
     private var isWaitingForSdk = false
 
     companion object {
-        private const val TAG = "StartIoRewarded"
-        private const val REWARD_AMOUNT = 150
+        const val REWARD_AMOUNT = 150
     }
 
     init {
-        loadAd()
+        // Register load listener that fires ONLY after SDK initialization completes
+        StartIoSdkState.runWhenReady {
+            loadAd()
+        }
     }
 
     fun loadAd() {
         if (!StartIoSdkState.isSdkReady()) {
             if (!isWaitingForSdk) {
                 isWaitingForSdk = true
+                Log.d(AdConfig.TAG_REWARDED, "SDK not ready yet. Queuing rewarded video request...")
                 StartIoSdkState.runWhenReady {
                     isWaitingForSdk = false
                     loadAd()
@@ -39,10 +45,18 @@ class RewardedInterstitialAdManager(
             return
         }
 
-        if (isLoading || rewardedAd != null) return
+        if (isLoading) {
+            Log.d(AdConfig.TAG_REWARDED, "Rewarded video is already loading, skipping request.")
+            return
+        }
+
+        if (rewardedAd != null) {
+            Log.d(AdConfig.TAG_REWARDED, "Rewarded video is already cached and ready to show.")
+            return
+        }
 
         isLoading = true
-        Log.i(TAG, "Requesting rewarded video")
+        Log.i(AdConfig.TAG_REWARDED, "Requesting Start.io Rewarded Video (AdMode.REWARDED_VIDEO)...")
 
         val newAd = StartAppAd(context)
 
@@ -53,19 +67,26 @@ class RewardedInterstitialAdManager(
                     override fun onReceiveAd(ad: Ad) {
                         rewardedAd = newAd
                         isLoading = false
-                        Log.i(TAG, "Rewarded video loaded successfully")
+                        Log.i(
+                            AdConfig.TAG_REWARDED,
+                            "Start.io Rewarded Video loaded successfully and ready to display"
+                        )
                     }
 
                     override fun onFailedToReceiveAd(ad: Ad?) {
                         rewardedAd = null
                         isLoading = false
-                        Log.e(TAG, "Rewarded video failed to load: $ad")
+                        val errorMsg = ad?.errorMessage ?: "No ad fill or network error"
+                        Log.w(
+                            AdConfig.TAG_REWARDED,
+                            "Start.io Rewarded Video failed to load: $errorMsg"
+                        )
                     }
                 }
             )
         } catch (e: Exception) {
             isLoading = false
-            Log.e(TAG, "Rewarded load exception", e)
+            Log.e(AdConfig.TAG_REWARDED, "Exception while requesting Rewarded Video: ${e.message}", e)
         }
     }
 
@@ -84,7 +105,7 @@ class RewardedInterstitialAdManager(
         val ad = rewardedAd
 
         if (ad == null) {
-            Log.w(TAG, "No rewarded video available. Requesting another ad.")
+            Log.w(AdConfig.TAG_REWARDED, "No rewarded video ad cached when show() called. Initiating reload.")
             loadAd()
             onAdNotReady()
             return
@@ -97,6 +118,7 @@ class RewardedInterstitialAdManager(
             if (finished) return
             finished = true
             rewardedAd = null
+            // Preload next rewarded ad in the background
             loadAd()
             onAdClosed()
         }
@@ -106,37 +128,36 @@ class RewardedInterstitialAdManager(
                 override fun onVideoCompleted() {
                     if (!rewardGranted) {
                         rewardGranted = true
-                        Log.i(TAG, "Rewarded video completed")
-
-                        onRewardEarned(
-                            "video_completed",
-                            REWARD_AMOUNT
+                        Log.i(
+                            AdConfig.TAG_REWARDED,
+                            "Rewarded video completed! Granting $REWARD_AMOUNT XP reward."
                         )
+                        onRewardEarned("topik_bonus_unlock", REWARD_AMOUNT)
                     }
                 }
             })
 
             ad.showAd(object : AdDisplayListener {
                 override fun adDisplayed(ad: Ad) {
-                    Log.i(TAG, "Rewarded video displayed")
+                    Log.i(AdConfig.TAG_REWARDED, "Rewarded video displayed on screen")
                 }
 
                 override fun adHidden(ad: Ad) {
-                    Log.i(TAG, "Rewarded video closed")
+                    Log.i(AdConfig.TAG_REWARDED, "Rewarded video closed by user")
                     finish()
                 }
 
                 override fun adClicked(ad: Ad) {
-                    Log.d(TAG, "Rewarded video clicked")
+                    Log.d(AdConfig.TAG_REWARDED, "Rewarded video clicked by user")
                 }
 
                 override fun adNotDisplayed(ad: Ad) {
-                    Log.e(TAG, "Rewarded video could not be displayed")
+                    Log.e(AdConfig.TAG_REWARDED, "Rewarded video could not be displayed")
                     finish()
                 }
             })
         } catch (e: Exception) {
-            Log.e(TAG, "Rewarded display exception", e)
+            Log.e(AdConfig.TAG_REWARDED, "Exception while showing rewarded ad: ${e.message}", e)
             finish()
         }
     }

@@ -21,10 +21,12 @@ export async function downloadAndroidProjectZip(
   }
 
   // Also include the assets/curriculum.json
-  const curriculumResponse = await fetch('/android/app/src/main/assets/curriculum.json').catch(() => null);
+  const curriculumResponse = await fetch('/curriculum.json').catch(() => null);
   if (curriculumResponse && curriculumResponse.ok) {
     const jsonText = await curriculumResponse.text();
-    rootFolder?.file('app/src/main/assets/curriculum.json', jsonText);
+    if (jsonText && !jsonText.startsWith('<!doctype') && !jsonText.startsWith('<!DOCTYPE') && !jsonText.startsWith('<html')) {
+      rootFolder?.file('app/src/main/assets/curriculum.json', jsonText);
+    }
   }
 
   const content = await zip.generateAsync({

@@ -1,22 +1,19 @@
 package com.shahabmillizai.learnkorean.ads
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.viewinterop.AndroidView
-import com.startapp.sdk.ads.banner.Banner
 
+/**
+ * Convenient Composable entry point for Start.io banners.
+ * By default provides the large, tall MREC banner (300x250) for primary placements.
+ */
 @Composable
-fun StartIoBanner() {
-    if (!StartIoSdkState.isReady) return
-
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        factory = { context ->
-            Banner(context)
-        }
+fun StartIoBanner(
+    modifier: Modifier = Modifier,
+    isLarge: Boolean = true
+) {
+    BannerAdView(
+        modifier = modifier,
+        bannerSize = if (isLarge) StartIoBannerSize.LARGE_MREC else StartIoBannerSize.STANDARD
     )
 }

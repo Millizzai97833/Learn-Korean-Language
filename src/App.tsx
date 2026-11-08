@@ -37,7 +37,7 @@ import {
   KOREAN_LEVELS,
   DICTIONARY_DATA,
   HANGUL_ALPHABET,
-  ADMOB_SPECS,
+  STARTIO_SPECS,
   Level,
   Lesson,
   DictionaryEntry,
@@ -1322,22 +1322,95 @@ export default function App() {
                     )}
                   </div>
 
-                  {/* Production Bottom Banner Ad Bar (Strictly Above Nav Buttons) */}
-                  <div
-                    className={`h-11 px-3 border-t flex items-center justify-between text-[11px] z-20 ${
-                      simTheme === 'dark' ? 'bg-[#1A1A20] border-slate-800' : 'bg-slate-100 border-slate-200'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white">
-                        AD
-                      </span>
-                      <span className="font-mono text-[10px] text-slate-500 truncate max-w-[190px]">
-                        {useTestAds ? ADMOB_SPECS.units.banner.testId : ADMOB_SPECS.units.banner.realId}
+                  {/* Start.io Bottom Banner Ad (Strictly Above Nav Buttons, Never Overlapping) */}
+                  {simBottomTab === 'home' && !activeLessonId ? (
+                    /* Large Tall Start.io Banner (Medium Rectangle - MREC: 300x250) */
+                    <div
+                      className={`border-t flex flex-col items-center justify-center p-2.5 z-20 shrink-0 ${
+                        simTheme === 'dark' ? 'bg-[#18181E] border-slate-800' : 'bg-slate-100 border-slate-200'
+                      }`}
+                    >
+                      <div className="w-[300px] h-[250px] rounded-xl overflow-hidden border border-slate-700/60 shadow-lg flex flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white relative">
+                        {/* Top Start.io Ad Attribution Header */}
+                        <div className="flex items-center justify-between px-3 py-1.5 bg-black/40 border-b border-white/10 backdrop-blur-sm">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500 text-black tracking-wider">
+                              AD
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-200 tracking-tight flex items-center gap-1">
+                              Start.io MREC
+                            </span>
+                          </div>
+                          <span className="font-mono text-[9px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                            App ID: {STARTIO_SPECS.startIoAppId} • Test Mode
+                          </span>
+                        </div>
+
+                        {/* Creative Content Body (300x250 aspect ratio respected, no distortion) */}
+                        <div className="px-4 py-3 flex-1 flex flex-col justify-center space-y-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
+                              한
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white leading-tight">
+                                TOPIK Masterclass 2026
+                              </div>
+                              <div className="text-[10px] text-slate-300">
+                                Official Partner • 4.9 ★★★★★ (12k)
+                              </div>
+                            </div>
+                          </div>
+
+                          <p className="text-[11px] text-slate-300 leading-snug">
+                            Master 1,200+ Korean words & Hangul with interactive flashcards. Download complimentary test guides.
+                          </p>
+
+                          <div className="pt-1">
+                            <button
+                              onClick={() => {
+                                setUserXp(prev => prev + 10);
+                              }}
+                              className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                            >
+                              <span>Explore Free Trial</span>
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Bottom Tag */}
+                        <div className="px-3 py-1 bg-black/50 border-t border-white/10 flex items-center justify-between text-[9px] text-slate-400 font-mono">
+                          <span>com.startapp.sdk.ads.banner.Mrec</span>
+                          <span className="text-indigo-300">300 × 250 dp</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Standard Start.io Banner (320x50) for other tabs */
+                    <div
+                      className={`h-[50px] px-3 border-t flex items-center justify-between text-[11px] z-20 shrink-0 ${
+                        simTheme === 'dark' ? 'bg-[#1A1A20] border-slate-800' : 'bg-slate-100 border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500 text-black">
+                          AD
+                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-semibold text-slate-200">
+                            Start.io Standard Banner
+                          </span>
+                          <span className="font-mono text-[9px] text-slate-400">
+                            App ID: {STARTIO_SPECS.startIoAppId} • 320×50 dp
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-mono">
+                        Active
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-semibold">320×50 Adaptive</span>
-                  </div>
+                  )}
 
                   {/* Android Bottom Navigation Bar (5 tabs: Home, Lessons, Practice, Dictionary, Profile) */}
                   <div
@@ -1474,62 +1547,56 @@ export default function App() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 3: ADMOB INTEGRATION VERIFICATION */}
+        {/* TAB 3: START.IO INTEGRATION & MONETIZATION */}
         {/* ========================================================================= */}
         {activePortalTab === 'admob' && (
           <div className="flex-1 max-w-6xl mx-auto w-full p-6 space-y-8">
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                Google AdMob Monetization Architecture
+                Start.io In-App SDK 5.4.0 Monetization Architecture
               </h2>
               <p className="text-xs text-slate-400 mt-1">
-                Official Google Mobile Ads SDK integration for Developer Shahab Millizai (App ID: {ADMOB_SPECS.realAppId})
+                Verified Start.io integration for Developer Shahab Millizai (App ID: {STARTIO_SPECS.startIoAppId})
               </p>
             </div>
 
             {/* Units Comparison Matrix */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm overflow-x-auto">
-              <div className="text-sm font-bold text-white mb-4">Ad Unit Verification & Routing</div>
+              <div className="text-sm font-bold text-white mb-4">Start.io Ad Formats & Placement Specifications</div>
               <table className="w-full text-left text-xs font-mono">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
                     <th className="py-2.5">Ad Format</th>
-                    <th className="py-2.5">Production Unit ID (Release Build)</th>
-                    <th className="py-2.5">Google Test ID (Debug Build)</th>
-                    <th className="py-2.5">Policy Placement Guard</th>
+                    <th className="py-2.5">SDK Class / Method</th>
+                    <th className="py-2.5">Dimensions</th>
+                    <th className="py-2.5">Placement & Policy Guard</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800 text-slate-300">
                   <tr>
-                    <td className="py-3 font-sans font-bold text-white">Banner</td>
-                    <td className="py-3 text-rose-400">{ADMOB_SPECS.units.banner.realId}</td>
-                    <td className="py-3 text-slate-500">{ADMOB_SPECS.units.banner.testId}</td>
-                    <td className="py-3 font-sans text-slate-400">{ADMOB_SPECS.units.banner.placement}</td>
+                    <td className="py-3 font-sans font-bold text-amber-400">Large MREC Banner</td>
+                    <td className="py-3 text-indigo-400">{STARTIO_SPECS.units.bigBanner.class}</td>
+                    <td className="py-3 text-slate-300">{STARTIO_SPECS.units.bigBanner.dimensions}</td>
+                    <td className="py-3 font-sans text-slate-400">{STARTIO_SPECS.units.bigBanner.placement}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-sans font-bold text-white">Standard Banner</td>
+                    <td className="py-3 text-indigo-400">{STARTIO_SPECS.units.standardBanner.class}</td>
+                    <td className="py-3 text-slate-300">{STARTIO_SPECS.units.standardBanner.dimensions}</td>
+                    <td className="py-3 font-sans text-slate-400">{STARTIO_SPECS.units.standardBanner.placement}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-sans font-bold text-white">Rewarded Video</td>
+                    <td className="py-3 text-emerald-400">{STARTIO_SPECS.units.rewarded.mode}</td>
+                    <td className="py-3 text-slate-300">Full-Screen Video</td>
+                    <td className="py-3 font-sans text-slate-400">{STARTIO_SPECS.units.rewarded.placement}</td>
                   </tr>
                   <tr>
                     <td className="py-3 font-sans font-bold text-white">Interstitial</td>
-                    <td className="py-3 text-rose-400">{ADMOB_SPECS.units.interstitial.realId}</td>
-                    <td className="py-3 text-slate-500">{ADMOB_SPECS.units.interstitial.testId}</td>
-                    <td className="py-3 font-sans text-slate-400">{ADMOB_SPECS.units.interstitial.placement}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 font-sans font-bold text-white">Rewarded Interstitial</td>
-                    <td className="py-3 text-rose-400">{ADMOB_SPECS.units.rewardedInterstitial.realId}</td>
-                    <td className="py-3 text-slate-500">{ADMOB_SPECS.units.rewardedInterstitial.testId}</td>
-                    <td className="py-3 font-sans text-slate-400">{ADMOB_SPECS.units.rewardedInterstitial.placement}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 font-sans font-bold text-white">App Open</td>
-                    <td className="py-3 text-rose-400">{ADMOB_SPECS.units.appOpen.realId}</td>
-                    <td className="py-3 text-slate-500">{ADMOB_SPECS.units.appOpen.testId}</td>
-                    <td className="py-3 font-sans text-slate-400">{ADMOB_SPECS.units.appOpen.placement}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 font-sans font-bold text-white">Native Advanced</td>
-                    <td className="py-3 text-rose-400">{ADMOB_SPECS.units.native.realId}</td>
-                    <td className="py-3 text-slate-500">{ADMOB_SPECS.units.native.testId}</td>
-                    <td className="py-3 font-sans text-slate-400">{ADMOB_SPECS.units.native.placement}</td>
+                    <td className="py-3 text-indigo-400">{STARTIO_SPECS.units.interstitial.mode}</td>
+                    <td className="py-3 text-slate-300">Full-Screen Static/Video</td>
+                    <td className="py-3 font-sans text-slate-400">{STARTIO_SPECS.units.interstitial.placement}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1740,7 +1807,7 @@ export default function App() {
                 Shown at natural breaks between lessons. Frequency limit: At most once every 3 completed lessons.
               </p>
               <div className="font-mono text-[10px] text-indigo-400 pt-2">
-                Unit ID: {useTestAds ? ADMOB_SPECS.units.interstitial.testId : ADMOB_SPECS.units.interstitial.realId}
+                Format: StartAppAd (Interstitial) • App ID: {STARTIO_SPECS.startIoAppId}
               </div>
             </div>
 
@@ -1780,8 +1847,8 @@ export default function App() {
               <p className="text-xs text-slate-300 leading-relaxed">
                 Watch a short sponsored video to unlock exclusive TOPIK exam phrases, audio pronunciation hints, and <strong className="text-amber-400">+150 bonus XP</strong>!
               </p>
-              <div className="font-mono text-[10px] text-slate-500 pt-1">
-                Unit ID: {useTestAds ? ADMOB_SPECS.units.rewardedInterstitial.testId : ADMOB_SPECS.units.rewardedInterstitial.realId}
+              <div className="font-mono text-[10px] text-slate-400 pt-1">
+                Format: StartAppAd.AdMode.REWARDED_VIDEO • App ID: {STARTIO_SPECS.startIoAppId}
               </div>
             </div>
 

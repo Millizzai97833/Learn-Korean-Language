@@ -1,7 +1,7 @@
-
 package com.shahabmillizai.learnkorean
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -39,21 +39,20 @@ class MainActivity : ComponentActivity() {
     private lateinit var rewardedManager: RewardedInterstitialAdManager
     private lateinit var repository: KoreanRepository
 
-    private var adsReady by mutableStateOf(false)
+    private var appReady by mutableStateOf(false)
     private var sdkInitializationStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val userPreferences = UserPreferences(this)
-
-        repository = KoreanRepository(
-            this,
-            userPreferences
-        )
-
+        repository = KoreanRepository(this, userPreferences)
         ttsManager = KoreanTtsManager(this)
         consentManager = ConsentManager(this)
+
+        // Instantiate ad managers (they internally wait for StartIoSdkState.isReady before loading)
+        interstitialManager = InterstitialAdManager(this)
+        rewardedManager = RewardedInterstitialAdManager(this)
 
         setContent {
             LearnKoreanTheme {
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (adsReady) {
+                    if (appReady) {
                         MainAppNavigation(
                             repository = repository,
                             ttsManager = ttsManager,
@@ -87,9 +86,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Gather consent first, then initiate Start.io SDK
         consentManager.gatherConsent(this) {
             initializeStartIo()
         }
+
+        // App content is ready to render
+        appReady = true
     }
 
     private fun initializeStartIo() {
@@ -99,52 +102,53 @@ class MainActivity : ComponentActivity() {
         sdkInitializationStarted = true
 
         try {
-            if (BuildConfig.DEBUG) {
+            if (AdConfig.forceTestMode) {
                 StartAppSDK.setTestAdsEnabled(true)
+                Log.d(AdConfig.TAG_SDK, "Start.io test ads enabled for debug environment")
             }
+
+            Log.i(
+                AdConfig.TAG_SDK,
+                "Initializing Start.io SDK (App ID: ${AdConfig.START_IO_APP_ID})..."
+            )
 
             StartAppSDK.initParams(
                 applicationContext,
                 AdConfig.START_IO_APP_ID
             )
                 .setReturnAdsEnabled(false)
-                .setCallback {
-                    StartIoSdkState.markReady()
-                    android.util.Log.i(
-                        "LearnKorean",
-                        "Start.io SDK initialized successfully"
-                    )
-                }
+                .setCallback(Runnable {
+                    runOnUiThread {
+                        Log.i(
+                            AdConfig.TAG_SDK,
+                            "Start.io SDK initialization callback confirmed success"
+                        )
+                        StartIoSdkState.markReady()
+                    }
+                })
                 .init()
 
-            interstitialManager = InterstitialAdManager(this)
-            rewardedManager = RewardedInterstitialAdManager(this)
-
-            adsReady = true
-
         } catch (e: Exception) {
-            android.util.Log.e(
-                "LearnKorean",
-                "Start.io initialization error",
+            Log.e(
+                AdConfig.TAG_SDK,
+                "Start.io SDK initialization failed with exception: ${e.message}",
                 e
             )
-
-            StartIoSdkState.markReady()
-            interstitialManager = InterstitialAdManager(this)
-            rewardedManager = RewardedInterstitialAdManager(this)
-            adsReady = true
+            // CRITICAL: Do NOT mark SDK as ready on failure
+            StartIoSdkState.markFailed(e.message ?: "Initialization exception")
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        if (::interstitialManager.isInitialized) {
-            interstitialManager.loadAd()
-        }
-
-        if (::rewardedManager.isInitialized) {
-            rewardedManager.loadAd()
+        if (StartIoSdkState.isSdkReady()) {
+            if (::interstitialManager.isInitialized) {
+                interstitialManager.loadAd()
+            }
+            if (::rewardedManager.isInitialized) {
+                rewardedManager.loadAd()
+            }
         }
     }
 

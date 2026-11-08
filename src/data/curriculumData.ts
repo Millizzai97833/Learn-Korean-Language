@@ -647,40 +647,33 @@ export const DICTIONARY_DATA: DictionaryEntry[] = [
   { korean: '속담', romanization: 'Sokdam', english: 'Proverb / Idiom', urdu: 'کہاوت / ضرب المثل', category: 'Culture', level: 'Advanced' },
 ];
 
-export const ADMOB_SPECS = {
+export const STARTIO_SPECS = {
   developer: 'Shahab Millizai',
   applicationId: 'com.shahabmillizai.learnkorean',
-  realAppId: 'ca-app-pub-2790436784008422~8320873870',
+  startIoAppId: '210777317',
   units: {
-    banner: {
-      name: 'Banner',
-      realId: 'ca-app-pub-2790436784008422/7007792206',
-      testId: 'ca-app-pub-3940256099942544/6300978111',
-      placement: 'Bottom of Home, Lessons & Dictionary screens (non-overlapping)',
+    bigBanner: {
+      name: 'Large MREC Banner (300×250)',
+      class: 'com.startapp.sdk.ads.banner.Mrec',
+      dimensions: '300dp × 250dp',
+      placement: 'Bottom of Home screen (centered horizontally, full height without clipping, non-overlapping)',
+    },
+    standardBanner: {
+      name: 'Standard Banner (320×50)',
+      class: 'com.startapp.sdk.ads.banner.Banner',
+      dimensions: '320dp × 50dp',
+      placement: 'Bottom of Lessons, Practice, Dictionary & Profile screens',
+    },
+    rewarded: {
+      name: 'Rewarded Video (+150 XP)',
+      mode: 'StartAppAd.AdMode.REWARDED_VIDEO',
+      placement: 'Bonus TOPIK vocabulary pack unlock dialog on Home screen',
     },
     interstitial: {
-      name: 'Interstitial',
-      realId: 'ca-app-pub-2790436784008422/5419378368',
-      testId: 'ca-app-pub-3940256099942544/1033173712',
-      placement: 'Natural transitions after completing 3 lessons (never inside active quizzes)',
-    },
-    rewardedInterstitial: {
-      name: 'Rewarded Interstitial',
-      realId: 'ca-app-pub-2790436784008422/7366437749',
-      testId: 'ca-app-pub-3940256099942544/5354046379',
-      placement: 'Bonus TOPIK vocabulary packs, study hints, +150 XP reward with prior consent',
-    },
-    appOpen: {
-      name: 'App Open',
-      realId: 'ca-app-pub-2790436784008422/1048441408',
-      testId: 'ca-app-pub-3940256099942544/9257395921',
-      placement: 'Application cold launch and foreground return (4-hour cache limit)',
-    },
-    native: {
-      name: 'Native Advanced',
-      realId: 'ca-app-pub-2790436784008422/3681297429',
-      testId: 'ca-app-pub-3940256099942544/2247696110',
-      placement: 'Native learning feed cards with official AD attribution badge',
+      name: 'Interstitial Ad',
+      mode: 'Automatic / Load on 3 Completed Lessons',
+      placement: 'Natural transitions after completing 3 lessons (never in quizzes)',
     },
   },
 };
+

@@ -1,1044 +1,130 @@
 // Manifest of all Android Studio project files with their exact code
 export interface ProjectFile {
   path: string;
-  category: 'gradle' | 'manifest' | 'kotlin' | 'res' | 'asset' | 'workflow' | 'docs';
+  category: "gradle" | "manifest" | "kotlin" | "res" | "asset" | "workflow" | "docs";
   description: string;
   content: string;
 }
 
 export const ANDROID_PROJECT_FILES: ProjectFile[] = [
   {
-    path: 'settings.gradle.kts',
-    category: 'gradle',
-    description: 'Project settings and repository resolution management',
-    content: `pluginManagement {
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\\\.android.*")
-                includeGroupByRegex("com\\\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "LearnKoreanLanguage"
-include(":app")
-`
+    path: "settings.gradle.kts",
+    category: "gradle",
+    description: "Project settings and repository resolution management",
+    content: "pluginManagement {\n    repositories {\n        google {\n            content {\n                includeGroupByRegex(\"com\\\\.android.*\")\n                includeGroupByRegex(\"com\\\\.google.*\")\n                includeGroupByRegex(\"androidx.*\")\n            }\n        }\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.name = \"LearnKoreanLanguage\"\ninclude(\":app\")\n"
   },
   {
-    path: 'build.gradle.kts',
-    category: 'gradle',
-    description: 'Root build configuration with Kotlin 2.0 & AGP 8.7',
-    content: `// Top-level build file
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.compose) apply false
-}
-`
+    path: "build.gradle.kts",
+    category: "gradle",
+    description: "Root build configuration with Kotlin & AGP plugins",
+    content: "// Top-level build file where you can add configuration options common to all sub-projects/modules.\nplugins {\n    alias(libs.plugins.android.application) apply false\n    alias(libs.plugins.kotlin.android) apply false\n    alias(libs.plugins.kotlin.compose) apply false\n}\n"
   },
   {
-    path: 'gradle.properties',
-    category: 'gradle',
-    description: 'Gradle JVM and AndroidX configuration',
-    content: `org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-android.useAndroidX=true
-kotlin.code.style=official
-android.nonTransitiveRClass=true
-`
+    path: "gradle.properties",
+    category: "gradle",
+    description: "Gradle JVM and AndroidX configuration",
+    content: "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\nandroid.useAndroidX=true\nkotlin.code.style=official\nandroid.nonTransitiveRClass=true\n"
   },
   {
-    path: 'gradle/libs.versions.toml',
-    category: 'gradle',
-    description: 'Standard version catalog with Google Ads 23.6.0 & Compose',
-    content: `[versions]
-agp = "8.7.2"
-kotlin = "2.0.21"
-coreKtx = "1.15.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.9.3"
-composeBom = "2024.11.00"
-navigationCompose = "2.8.4"
-playServicesAds = "23.6.0"
-userMessagingPlatform = "3.1.0"
-materialIconsExtended = "1.7.5"
-gson = "2.11.0"
-coroutines = "1.9.0"
-
-[libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
-user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-
-[plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-`
+    path: "gradle/libs.versions.toml",
+    category: "gradle",
+    description: "Version catalog with Start.io SDK 5.4.0 & Compose",
+    content: "[versions]\nagp = \"8.9.1\"\nkotlin = \"2.2.20\"\ncoreKtx = \"1.15.0\"\njunit = \"4.13.2\"\njunitVersion = \"1.2.1\"\nespressoCore = \"3.6.1\"\nlifecycleRuntimeKtx = \"2.8.7\"\nactivityCompose = \"1.9.3\"\ncomposeBom = \"2024.11.00\"\nnavigationCompose = \"2.8.4\"\nmaterialIconsExtended = \"1.7.5\"\ngson = \"2.11.0\"\ncoroutines = \"1.9.0\"\n\n[libraries]\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"coreKtx\" }\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\nandroidx-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\nandroidx-espresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\nandroidx-lifecycle-runtime-ktx = { group = \"androidx.lifecycle\", name = \"lifecycle-runtime-ktx\", version.ref = \"lifecycleRuntimeKtx\" }\nandroidx-lifecycle-viewmodel-compose = { group = \"androidx.lifecycle\", name = \"lifecycle-viewmodel-compose\", version.ref = \"lifecycleRuntimeKtx\" }\nandroidx-lifecycle-process = { group = \"androidx.lifecycle\", name = \"lifecycle-process\", version.ref = \"lifecycleRuntimeKtx\" }\nandroidx-activity-compose = { group = \"androidx.activity\", name = \"activity-compose\", version.ref = \"activityCompose\" }\nandroidx-compose-bom = { group = \"androidx.compose\", name = \"compose-bom\", version.ref = \"composeBom\" }\nandroidx-ui = { group = \"androidx.compose.ui\", name = \"ui\" }\nandroidx-ui-graphics = { group = \"androidx.compose.ui\", name = \"ui-graphics\" }\nandroidx-ui-tooling = { group = \"androidx.compose.ui\", name = \"ui-tooling\" }\nandroidx-ui-tooling-preview = { group = \"androidx.compose.ui\", name = \"ui-tooling-preview\" }\nandroidx-ui-test-manifest = { group = \"androidx.compose.ui\", name = \"ui-test-manifest\" }\nandroidx-ui-test-junit4 = { group = \"androidx.compose.ui\", name = \"ui-test-junit4\" }\nandroidx-material3 = { group = \"androidx.compose.material3\", name = \"material3\" }\nandroidx-material-icons-extended = { group = \"androidx.compose.material\", name = \"material-icons-extended\", version.ref = \"materialIconsExtended\" }\nandroidx-navigation-compose = { group = \"androidx.navigation\", name = \"navigation-compose\", version.ref = \"navigationCompose\" }\nstartio-sdk = { group = \"com.startapp\", name = \"inapp-sdk\", version = \"5.4.0\" }\ngson = { group = \"com.google.code.gson\", name = \"gson\", version.ref = \"gson\" }\nkotlinx-coroutines-android = { group = \"org.jetbrains.kotlinx\", name = \"kotlinx-coroutines-android\", version.ref = \"coroutines\" }\n\n[plugins]\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\nkotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }\nkotlin-compose = { id = \"org.jetbrains.kotlin.plugin.compose\", version.ref = \"kotlin\" }\n"
   },
   {
-    path: 'gradle/wrapper/gradle-wrapper.properties',
-    category: 'gradle',
-    description: 'Gradle 8.9 wrapper setup',
-    content: `distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\\://services.gradle.org/distributions/gradle-8.9-bin.zip
-networkTimeout=10000
-validateDistributionUrl=true
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-`
+    path: "gradle/wrapper/gradle-wrapper.properties",
+    category: "gradle",
+    description: "Gradle wrapper setup",
+    content: "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.11.1-bin.zip\nnetworkTimeout=10000\nvalidateDistributionUrl=true\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n"
   },
   {
-    path: 'gradlew',
-    category: 'gradle',
-    description: 'POSIX execution wrapper script',
-    content: `#!/bin/sh
-APP_BASE_NAME=\`basename "$0"\`
-APP_HOME="\`pwd -P\`"
-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-if [ -n "$JAVA_HOME" ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-        JAVACMD="$JAVA_HOME/jre/sh/java"
-    else
-        JAVACMD="$JAVA_HOME/bin/java"
-    fi
-else
-    JAVACMD="java"
-fi
-exec "$JAVACMD" -jar "$CLASSPATH" "$@"
-`
+    path: "app/build.gradle.kts",
+    category: "gradle",
+    description: "App module build configuration with Start.io SDK 5.4.0 & Compose",
+    content: "\nplugins {\n    alias(libs.plugins.android.application)\n    alias(libs.plugins.kotlin.android)\n    alias(libs.plugins.kotlin.compose)\n}\n\nandroid {\n    namespace = \"com.shahabmillizai.learnkorean\"\n    compileSdk = 36\n\n    defaultConfig {\n        applicationId = \"com.shahabmillizai.learnkorean\"\n        minSdk = 24\n        targetSdk = 35\n        versionCode = 2\n        versionName = \"1.0.1\"\n\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\n\n        vectorDrawables {\n            useSupportLibrary = true\n        }\n\n        buildConfigField(\n            \"String\",\n            \"DEVELOPER_NAME\",\n            \"\\\"Shahab Millizai\\\"\"\n        )\n    }\n\n    signingConfigs {\n        create(\"release\") {\n            storeFile = file(\"learnkorean-release.jks\")\n            storePassword = System.getenv(\"KEYSTORE_PASSWORD\")\n            keyAlias = System.getenv(\"KEY_ALIAS\")\n            keyPassword = System.getenv(\"KEYSTORE_PASSWORD\")\n        }\n    }\n\n    buildTypes {\n        debug {\n            isMinifyEnabled = false\n            applicationIdSuffix = \".debug\"\n            versionNameSuffix = \"-debug\"\n        }\n\n        release {\n            signingConfig = signingConfigs.getByName(\"release\")\n            isMinifyEnabled = true\n            isShrinkResources = true\n\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\"\n            )\n        }\n    }\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = \"17\"\n    }\n\n    buildFeatures {\n        compose = true\n        buildConfig = true\n    }\n\n    packaging {\n        resources {\n            excludes += \"/META-INF/{AL2.0,LGPL2.1}\"\n        }\n    }\n}\n\ndependencies {\n    implementation(libs.androidx.core.ktx)\n    implementation(libs.androidx.lifecycle.runtime.ktx)\n    implementation(libs.androidx.lifecycle.viewmodel.compose)\n    implementation(libs.androidx.lifecycle.process)\n    implementation(libs.androidx.activity.compose)\n\n    implementation(platform(libs.androidx.compose.bom))\n    implementation(libs.androidx.ui)\n    implementation(libs.androidx.ui.graphics)\n    implementation(libs.androidx.ui.tooling.preview)\n    implementation(libs.androidx.material3)\n    implementation(libs.androidx.material.icons.extended)\n    implementation(libs.androidx.navigation.compose)\n\n    // Start.io SDK 5.4.0\n    implementation(libs.startio.sdk)\n\n    implementation(libs.gson)\n    implementation(libs.kotlinx.coroutines.android)\n\n    testImplementation(libs.junit)\n\n    androidTestImplementation(libs.androidx.junit)\n    androidTestImplementation(libs.androidx.espresso.core)\n    androidTestImplementation(platform(libs.androidx.compose.bom))\n    androidTestImplementation(libs.androidx.ui.test.junit4)\n\n    debugImplementation(libs.androidx.ui.tooling)\n    debugImplementation(libs.androidx.ui.test.manifest)\n}\n"
   },
   {
-    path: 'gradlew.bat',
-    category: 'gradle',
-    description: 'Windows execution wrapper script',
-    content: `@if "%DEBUG%" == "" @echo off
-set DIRNAME=%~dp0
-if "%DIRNAME%" == "" set DIRNAME=.
-set APP_HOME=%DIRNAME%
-set CLASSPATH=%APP_HOME%\\gradle\\wrapper\\gradle-wrapper.jar
-if defined JAVA_HOME goto findJavaFromJavaHome
-set JAVACMD=java.exe
-goto execute
-:findJavaFromJavaHome
-set JAVACMD=%JAVA_HOME%\\bin\\java.exe
-:execute
-"%JAVACMD%" -jar "%CLASSPATH%" %*
-`
+    path: "app/proguard-rules.pro",
+    category: "gradle",
+    description: "ProGuard / R8 keep rules for Start.io SDK and models",
+    content: "\n# ==========================================\n# Start.io SDK ProGuard / R8 Rules\n# ==========================================\n\n# Keep Start.io SDK classes\n-keep class com.startapp.** { *; }\n\n# Keep TrueNet SDK classes\n-keep class com.truenet.** { *; }\n\n# SDK warning suppression\n-dontwarn com.startapp.**\n-dontwarn com.truenet.**\n\n# Preserve reflection and annotation attributes\n-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod\n\n# ==========================================\n# Google Mobile Ads\n# ==========================================\n\n-keep public class com.google.android.gms.ads.** {\n    public *;\n}\n\n-keep class com.google.android.gms.ads.nativead.** { *; }\n\n# ==========================================\n# Gson data models\n# ==========================================\n\n-keepclassmembers class com.shahabmillizai.learnkorean.data.model.** {\n    <fields>;\n}\n\n-keep class com.shahabmillizai.learnkorean.data.model.** {\n    *;\n}\n\n# ==========================================\n# Android ViewModels\n# ==========================================\n\n-keepclassmembers class * extends androidx.lifecycle.ViewModel {\n    <init>(...);\n}\n"
   },
   {
-    path: 'app/build.gradle.kts',
-    category: 'gradle',
-    description: 'App module configuration: AdMob IDs, Java 17, Jetpack Compose',
-    content: `plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-}
-
-android {
-    namespace = "com.shahabmillizai.learnkorean"
-    compileSdk = 35
-
-    defaultConfig {
-        applicationId = "com.shahabmillizai.learnkorean"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
-        buildConfigField("String", "ADMOB_APP_ID", "\\"ca-app-pub-2790436784008422~8320873870\\"")
-        buildConfigField("String", "DEVELOPER_NAME", "\\"Shahab Millizai\\"")
-    }
-
-    buildTypes {
-        debug {
-            isMinifyEnabled = false
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-
-            // Google Official Test Ad Unit IDs
-            buildConfigField("String", "ADMOB_BANNER_ID", "\\"ca-app-pub-3940256099942544/6300978111\\"")
-            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\\"ca-app-pub-3940256099942544/1033173712\\"")
-            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\\"ca-app-pub-3940256099942544/5354046379\\"")
-            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\\"ca-app-pub-3940256099942544/9257395921\\"")
-            buildConfigField("String", "ADMOB_NATIVE_ID", "\\"ca-app-pub-3940256099942544/2247696110\\"")
-            buildConfigField("Boolean", "IS_TEST_ADS", "true")
-        }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-
-            // Production Real AdMob Ad Unit IDs (Shahab Millizai)
-            buildConfigField("String", "ADMOB_BANNER_ID", "\\"ca-app-pub-2790436784008422/7007792206\\"")
-            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\\"ca-app-pub-2790436784008422/5419378368\\"")
-            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\\"ca-app-pub-2790436784008422/7366437749\\"")
-            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\\"ca-app-pub-2790436784008422/1048441408\\"")
-            buildConfigField("String", "ADMOB_NATIVE_ID", "\\"ca-app-pub-2790436784008422/3681297429\\"")
-            buildConfigField("Boolean", "IS_TEST_ADS", "false")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-}
-
-dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.navigation.compose)
-
-    implementation(libs.play.services.ads)
-    implementation(libs.user.messaging.platform)
-    implementation(libs.gson)
-    implementation(libs.kotlinx.coroutines.android)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-}
-`
+    path: "app/src/main/AndroidManifest.xml",
+    category: "manifest",
+    description: "Android Manifest with permissions and StartAppInitProvider removal",
+    content: "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    package=\"com.shahabmillizai.learnkorean\">\n\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\n    <uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />\n    <uses-permission android:name=\"android.permission.AD_ID\" />\n\n    <application\n        android:name=\".LearnKoreanApp\"\n        android:allowBackup=\"true\"\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\n        android:fullBackupContent=\"@xml/backup_rules\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.LearnKoreanLanguage\"\n        android:networkSecurityConfig=\"@xml/network_security_config\"\n        android:hardwareAccelerated=\"true\">\n\n        <!-- Use code initialization in LearnKoreanApp; remove SDK auto-init provider\n             so it cannot initialize before the explicit Start.io App ID is passed. -->\n        <provider\n            android:name=\"com.startapp.sdk.adsbase.StartAppInitProvider\"\n            android:authorities=\"${applicationId}.startappinitprovider\"\n            tools:node=\"remove\" />\n\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\"\n            android:label=\"@string/app_name\"\n            android:theme=\"@style/Theme.LearnKoreanLanguage\"\n            android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n"
   },
   {
-    path: 'app/proguard-rules.pro',
-    category: 'gradle',
-    description: 'ProGuard rules for Google Mobile Ads and JSON serialization',
-    content: `-keep public class com.google.android.gms.ads.** { public *; }
--keep class com.google.android.gms.ads.nativead.** { *; }
--keepclassmembers class com.shahabmillizai.learnkorean.data.model.** { <fields>; }
--keep class com.shahabmillizai.learnkorean.data.model.** { *; }
--keepclassmembers class * extends androidx.lifecycle.ViewModel { <init>(...); }
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/AdConfig.kt",
+    category: "kotlin",
+    description: "Start.io App ID 210777317 and MREC 300x250 dimensions",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport com.shahabmillizai.learnkorean.BuildConfig\n\nobject AdConfig {\n\n    /**\n     * Start.io Application ID registered for Learn Korean Language\n     * (com.shahabmillizai.learnkorean).\n     */\n    const val START_IO_APP_ID = \"210777317\"\n\n    // Logcat Tags for filtering ad events\n    const val TAG_SDK = \"StartIoSdk\"\n    const val TAG_BANNER = \"StartIoBanner\"\n    const val TAG_REWARDED = \"StartIoRewarded\"\n    const val TAG_INTERSTITIAL = \"StartIoInterstitial\"\n\n    // Big Banner (Medium Rectangle - MREC) standard dimensions\n    const val MREC_WIDTH_DP = 300\n    const val MREC_HEIGHT_DP = 250\n\n    // Standard Banner height\n    const val STANDARD_BANNER_HEIGHT_DP = 50\n\n    // Debug builds enable Start.io test ads for safe development\n    var forceTestMode: Boolean = BuildConfig.DEBUG\n}\n"
   },
   {
-    path: 'app/src/main/AndroidManifest.xml',
-    category: 'manifest',
-    description: 'Android Manifest with AdMob App ID and Internet permissions',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.shahabmillizai.learnkorean">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <application
-        android:name=".LearnKoreanApp"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.LearnKoreanLanguage"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:hardwareAccelerated="true"
-        tools:targetApi="31">
-
-        <!-- Real AdMob Application ID -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2790436784008422~8320873870" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.LearnKoreanLanguage"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/StartIoSdkState.kt",
+    category: "kotlin",
+    description: "Thread-safe Start.io SDK state & ad execution queue",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport android.os.Handler\nimport android.os.Looper\nimport android.util.Log\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.setValue\n\n/**\n * Thread-safe lifecycle state tracker for Start.io SDK.\n * Banners and Rewarded ads observe this state before initiating any ad requests.\n */\nobject StartIoSdkState {\n\n    @Volatile\n    private var sdkReady = false\n\n    @Volatile\n    private var sdkFailed = false\n\n    var isReady by mutableStateOf(false)\n        private set\n\n    var isFailed by mutableStateOf(false)\n        private set\n\n    var failureReason by mutableStateOf<String?>(null)\n        private set\n\n    private val lock = Any()\n    private val pendingActions = mutableListOf<() -> Unit>()\n    private val mainHandler = Handler(Looper.getMainLooper())\n\n    fun isSdkReady(): Boolean = sdkReady\n\n    fun isSdkFailed(): Boolean = sdkFailed\n\n    /**\n     * Executes the given action once the SDK has successfully initialized.\n     * If the SDK is already ready, executes immediately on the main thread.\n     * If the SDK failed to initialize, the action is discarded safely.\n     */\n    fun runWhenReady(action: () -> Unit) {\n        val (shouldRunNow, isAlreadyFailed) = synchronized(lock) {\n            when {\n                sdkReady -> Pair(true, false)\n                sdkFailed -> Pair(false, true)\n                else -> {\n                    pendingActions.add(action)\n                    Pair(false, false)\n                }\n            }\n        }\n\n        if (shouldRunNow) {\n            if (Looper.myLooper() == Looper.getMainLooper()) {\n                action()\n            } else {\n                mainHandler.post(action)\n            }\n        } else if (isAlreadyFailed) {\n            Log.w(\n                AdConfig.TAG_SDK,\n                \"Action skipped because Start.io SDK initialization failed earlier\"\n            )\n        }\n    }\n\n    /**\n     * Called ONLY from the StartAppSDK initialization callback upon verified success.\n     */\n    fun markReady() {\n        val actionsToRun = synchronized(lock) {\n            sdkReady = true\n            sdkFailed = false\n            failureReason = null\n            val copy = pendingActions.toList()\n            pendingActions.clear()\n            copy\n        }\n\n        Log.i(\n            AdConfig.TAG_SDK,\n            \"Start.io SDK confirmed ready. Dispatching ${actionsToRun.size} queued ad request(s).\"\n        )\n\n        mainHandler.post {\n            isReady = true\n            isFailed = false\n            actionsToRun.forEach { action ->\n                try {\n                    action()\n                } catch (e: Exception) {\n                    Log.e(AdConfig.TAG_SDK, \"Error executing pending ad action\", e)\n                }\n            }\n        }\n    }\n\n    /**\n     * Called when StartAppSDK initialization fails. Never marks the SDK as ready.\n     */\n    fun markFailed(reason: String) {\n        synchronized(lock) {\n            sdkReady = false\n            sdkFailed = true\n            failureReason = reason\n            val droppedCount = pendingActions.size\n            pendingActions.clear()\n            if (droppedCount > 0) {\n                Log.w(\n                    AdConfig.TAG_SDK,\n                    \"Start.io SDK initialization failed ($reason). Dropped $droppedCount pending ad action(s).\"\n                )\n            }\n        }\n\n        mainHandler.post {\n            isReady = false\n            isFailed = true\n        }\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/AdConfig.kt',
-    category: 'kotlin',
-    description: 'AdMob Configuration with Real & Official Google Test IDs',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import com.shahabmillizai.learnkorean.BuildConfig
-
-object AdConfig {
-    const val REAL_APP_ID = "ca-app-pub-2790436784008422~8320873870"
-    const val REAL_BANNER_ID = "ca-app-pub-2790436784008422/7007792206"
-    const val REAL_INTERSTITIAL_ID = "ca-app-pub-2790436784008422/5419378368"
-    const val REAL_REWARDED_INTERSTITIAL_ID = "ca-app-pub-2790436784008422/7366437749"
-    const val REAL_APP_OPEN_ID = "ca-app-pub-2790436784008422/1048441408"
-    const val REAL_NATIVE_ID = "ca-app-pub-2790436784008422/3681297429"
-
-    const val TEST_BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
-    const val TEST_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
-    const val TEST_REWARDED_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/5354046379"
-    const val TEST_APP_OPEN_ID = "ca-app-pub-3940256099942544/9257395921"
-    const val TEST_NATIVE_ID = "ca-app-pub-3940256099942544/2247696110"
-
-    var forceTestMode: Boolean = BuildConfig.DEBUG
-
-    fun getBannerAdUnitId(): String = if (forceTestMode || BuildConfig.DEBUG) TEST_BANNER_ID else REAL_BANNER_ID
-    fun getInterstitialAdUnitId(): String = if (forceTestMode || BuildConfig.DEBUG) TEST_INTERSTITIAL_ID else REAL_INTERSTITIAL_ID
-    fun getRewardedInterstitialAdUnitId(): String = if (forceTestMode || BuildConfig.DEBUG) TEST_REWARDED_INTERSTITIAL_ID else REAL_REWARDED_INTERSTITIAL_ID
-    fun getAppOpenAdUnitId(): String = if (forceTestMode || BuildConfig.DEBUG) TEST_APP_OPEN_ID else REAL_APP_OPEN_ID
-    fun getNativeAdUnitId(): String = if (forceTestMode || BuildConfig.DEBUG) TEST_NATIVE_ID else REAL_NATIVE_ID
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/BannerAdView.kt",
+    category: "kotlin",
+    description: "Jetpack Compose Start.io Banner supporting Large MREC (300x250) and Standard (320x50)",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport android.app.Activity\nimport android.content.Context\nimport android.content.ContextWrapper\nimport android.util.Log\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.FrameLayout\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.layout.wrapContentSize\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.DisposableEffect\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.viewinterop.AndroidView\nimport androidx.lifecycle.Lifecycle\nimport androidx.lifecycle.LifecycleEventObserver\nimport androidx.lifecycle.compose.LocalLifecycleOwner\nimport com.startapp.sdk.ads.banner.Banner\nimport com.startapp.sdk.ads.banner.BannerListener\nimport com.startapp.sdk.ads.banner.Mrec\n\n/**\n * Supported banner sizes for Start.io advertising.\n * LARGE_MREC (300x250) provides the big, tall banner requested for the Home screen.\n * STANDARD (320x50) is used for compact inline or bottom placement on other screens.\n */\nenum class StartIoBannerSize {\n    STANDARD,\n    LARGE_MREC\n}\n\nprivate tailrec fun Context.findActivity(): Activity? {\n    return when (this) {\n        is Activity -> this\n        is ContextWrapper -> baseContext.findActivity()\n        else -> null\n    }\n}\n\n/**\n * Production-ready Jetpack Compose wrapper for Start.io Banner and MREC ads.\n *\n * Features:\n * - Gated strictly on StartIoSdkState.isReady (no premature ad requests)\n * - Supported dimensions without distortion:\n *     - LARGE_MREC: 300dp x 250dp centered horizontally\n *     - STANDARD: 320dp x 50dp\n * - BannerListener logging load, failure, impression, and click events\n * - Lifecycle-aware: hides on PAUSE/DESTROY, shows on RESUME\n * - Recomposition-protected: ad is never re-requested during Compose state changes\n * - Clean disposal upon leaving composition\n */\n@Composable\nfun BannerAdView(\n    modifier: Modifier = Modifier,\n    bannerSize: StartIoBannerSize = StartIoBannerSize.STANDARD\n) {\n    // Only attempt to load banner if SDK has confirmed successful initialization\n    if (!StartIoSdkState.isReady) {\n        return\n    }\n\n    val context = LocalContext.current\n    val activity = remember(context) { context.findActivity() }\n    val lifecycleOwner = LocalLifecycleOwner.current\n\n    var bannerViewRef by remember { mutableStateOf<View?>(null) }\n    var isAdReceived by remember { mutableStateOf(false) }\n\n    // Manage activity/screen lifecycle for the banner view\n    DisposableEffect(lifecycleOwner) {\n        val observer = LifecycleEventObserver { _, event ->\n            when (event) {\n                Lifecycle.Event.ON_RESUME -> {\n                    bannerViewRef?.let { v ->\n                        when (v) {\n                            is Mrec -> v.showBanner()\n                            is Banner -> v.showBanner()\n                        }\n                        Log.d(AdConfig.TAG_BANNER, \"Lifecycle ON_RESUME: showing $bannerSize banner\")\n                    }\n                }\n                Lifecycle.Event.ON_PAUSE -> {\n                    bannerViewRef?.let { v ->\n                        when (v) {\n                            is Mrec -> v.hideBanner()\n                            is Banner -> v.hideBanner()\n                        }\n                        Log.d(AdConfig.TAG_BANNER, \"Lifecycle ON_PAUSE: hiding $bannerSize banner\")\n                    }\n                }\n                Lifecycle.Event.ON_DESTROY -> {\n                    bannerViewRef?.let { v ->\n                        when (v) {\n                            is Mrec -> v.hideBanner()\n                            is Banner -> v.hideBanner()\n                        }\n                        Log.d(AdConfig.TAG_BANNER, \"Lifecycle ON_DESTROY: cleaning up $bannerSize banner\")\n                    }\n                    bannerViewRef = null\n                }\n                else -> Unit\n            }\n        }\n        lifecycleOwner.lifecycle.addObserver(observer)\n\n        onDispose {\n            lifecycleOwner.lifecycle.removeObserver(observer)\n            bannerViewRef?.let { v ->\n                when (v) {\n                    is Mrec -> v.hideBanner()\n                    is Banner -> v.hideBanner()\n                }\n            }\n            bannerViewRef = null\n            Log.d(AdConfig.TAG_BANNER, \"BannerAdView ($bannerSize) disposed from composition\")\n        }\n    }\n\n    when (bannerSize) {\n        StartIoBannerSize.LARGE_MREC -> {\n            // Big tall banner: 300dp x 250dp, centered horizontally, no clipping or distortion\n            Box(\n                modifier = modifier\n                    .fillMaxWidth()\n                    .wrapContentHeight()\n                    .padding(vertical = 8.dp),\n                contentAlignment = Alignment.Center\n            ) {\n                AndroidView(\n                    modifier = Modifier.size(\n                        width = AdConfig.MREC_WIDTH_DP.dp,\n                        height = AdConfig.MREC_HEIGHT_DP.dp\n                    ),\n                    factory = { viewContext ->\n                        Log.i(\n                            AdConfig.TAG_BANNER,\n                            \"Creating Start.io Large MREC banner (${AdConfig.MREC_WIDTH_DP}x${AdConfig.MREC_HEIGHT_DP} dp)\"\n                        )\n\n                        val adContext = activity ?: viewContext\n\n                        val mrec = Mrec(adContext, object : BannerListener {\n                            override fun onReceiveAd(view: View) {\n                                isAdReceived = true\n                                (view as? Mrec)?.showBanner()\n                                Log.i(\n                                    AdConfig.TAG_BANNER,\n                                    \"Start.io Large MREC banner loaded successfully (display: ${view.width}x${view.height})\"\n                                )\n                            }\n\n                            override fun onFailedToReceiveAd(view: View) {\n                                isAdReceived = false\n                                (view as? Mrec)?.hideBanner()\n                                Log.w(\n                                    AdConfig.TAG_BANNER,\n                                    \"Start.io Large MREC banner failed to load. Start.io may return no-fill depending on network/inventory.\"\n                                )\n                            }\n\n                            override fun onImpression(view: View) {\n                                Log.d(AdConfig.TAG_BANNER, \"Start.io Large MREC impression logged\")\n                            }\n\n                            override fun onClick(view: View) {\n                                Log.d(AdConfig.TAG_BANNER, \"Start.io Large MREC banner clicked\")\n                            }\n                        })\n\n                        mrec.layoutParams = FrameLayout.LayoutParams(\n                            ViewGroup.LayoutParams.WRAP_CONTENT,\n                            ViewGroup.LayoutParams.WRAP_CONTENT,\n                            android.view.Gravity.CENTER\n                        )\n\n                        bannerViewRef = mrec\n                        mrec\n                    },\n                    update = {\n                        // Avoid triggering ad reload during Compose recompositions\n                    },\n                    onRelease = { view ->\n                        Log.d(AdConfig.TAG_BANNER, \"Releasing Start.io Large MREC view\")\n                        view.hideBanner()\n                    }\n                )\n            }\n        }\n\n        StartIoBannerSize.STANDARD -> {\n            // Standard banner: 320x50, centered horizontally\n            Box(\n                modifier = modifier\n                    .fillMaxWidth()\n                    .wrapContentHeight()\n                    .padding(vertical = 4.dp),\n                contentAlignment = Alignment.Center\n            ) {\n                AndroidView(\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .height(AdConfig.STANDARD_BANNER_HEIGHT_DP.dp),\n                    factory = { viewContext ->\n                        Log.i(\n                            AdConfig.TAG_BANNER,\n                            \"Creating Start.io Standard banner (height: ${AdConfig.STANDARD_BANNER_HEIGHT_DP} dp)\"\n                        )\n\n                        val adContext = activity ?: viewContext\n\n                        val banner = Banner(adContext, object : BannerListener {\n                            override fun onReceiveAd(view: View) {\n                                isAdReceived = true\n                                (view as? Banner)?.showBanner()\n                                Log.i(\n                                    AdConfig.TAG_BANNER,\n                                    \"Start.io Standard banner loaded successfully\"\n                                )\n                            }\n\n                            override fun onFailedToReceiveAd(view: View) {\n                                isAdReceived = false\n                                (view as? Banner)?.hideBanner()\n                                Log.w(\n                                    AdConfig.TAG_BANNER,\n                                    \"Start.io Standard banner failed to load\"\n                                )\n                            }\n\n                            override fun onImpression(view: View) {\n                                Log.d(AdConfig.TAG_BANNER, \"Start.io Standard banner impression logged\")\n                            }\n\n                            override fun onClick(view: View) {\n                                Log.d(AdConfig.TAG_BANNER, \"Start.io Standard banner clicked\")\n                            }\n                        })\n\n                        bannerViewRef = banner\n                        banner\n                    },\n                    update = {\n                        // Avoid re-requesting ads on recomposition\n                    },\n                    onRelease = { view ->\n                        Log.d(AdConfig.TAG_BANNER, \"Releasing Start.io Standard banner view\")\n                        view.hideBanner()\n                    }\n                )\n            }\n        }\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/BannerAdView.kt',
-    category: 'kotlin',
-    description: 'Compose Banner Ad with adaptive sizing and lifecycle release',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.view.View
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.ads.*
-
-@Composable
-fun BannerAdView(
-    modifier: Modifier = Modifier,
-    adUnitId: String = AdConfig.getBannerAdUnitId()
-) {
-    val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-
-    val adView = remember(adUnitId) {
-        AdView(context).apply {
-            setAdUnitId(adUnitId)
-            val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, screenWidth)
-            setAdSize(adSize)
-            adListener = object : AdListener() {
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) { visibility = View.GONE }
-                override fun onAdLoaded() { visibility = View.VISIBLE }
-            }
-            loadAd(AdRequest.Builder().build())
-        }
-    }
-
-    DisposableEffect(adView) {
-        adView.resume()
-        onDispose {
-            adView.pause()
-            adView.destroy()
-        }
-    }
-
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        AndroidView(factory = { adView }, modifier = Modifier.fillMaxWidth())
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/StartIoBanner.kt",
+    category: "kotlin",
+    description: "StartIoBanner composable entry point",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Modifier\n\n/**\n * Convenient Composable entry point for Start.io banners.\n * By default provides the large, tall MREC banner (300x250) for primary placements.\n */\n@Composable\nfun StartIoBanner(\n    modifier: Modifier = Modifier,\n    isLarge: Boolean = true\n) {\n    BannerAdView(\n        modifier = modifier,\n        bannerSize = if (isLarge) StartIoBannerSize.LARGE_MREC else StartIoBannerSize.STANDARD\n    )\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/InterstitialAdManager.kt',
-    category: 'kotlin',
-    description: 'Safe Interstitial Ad Manager with frequency capping',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.app.Activity
-import android.content.Context
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.interstitial.*
-
-class InterstitialAdManager(private val context: Context) {
-    private var interstitialAd: InterstitialAd? = null
-    private var isLoading = false
-    private var completedLessonCount = 0
-    private val lessonThreshold = 3
-
-    init { loadAd() }
-
-    fun loadAd() {
-        if (isLoading || interstitialAd != null) return
-        isLoading = true
-        val adRequest = AdRequest.Builder().build()
-        InterstitialAd.load(
-            context,
-            AdConfig.getInterstitialAdUnitId(),
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                    isLoading = false
-                }
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    interstitialAd = null
-                    isLoading = false
-                }
-            }
-        )
-    }
-
-    fun showIfAllowed(activity: Activity, isQuizActive: Boolean, onDismissed: () -> Unit) {
-        if (isQuizActive) { onDismissed(); return }
-        completedLessonCount++
-        if (completedLessonCount < lessonThreshold) { onDismissed(); return }
-
-        val ad = interstitialAd
-        if (ad != null) {
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    interstitialAd = null
-                    completedLessonCount = 0
-                    loadAd()
-                    onDismissed()
-                }
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    interstitialAd = null
-                    loadAd()
-                    onDismissed()
-                }
-            }
-            ad.show(activity)
-        } else {
-            loadAd()
-            onDismissed()
-        }
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/ConsentManager.kt",
+    category: "kotlin",
+    description: "Start.io user privacy consent dialog and SDK consent submission",
+    content: "\npackage com.shahabmillizai.learnkorean.ads\n\nimport android.app.Activity\nimport android.app.AlertDialog\nimport android.content.Context\nimport android.util.Log\nimport com.startapp.sdk.adsbase.StartAppSDK\n\nclass ConsentManager(context: Context) {\n\n    private val appContext = context.applicationContext\n\n    private val preferences = appContext.getSharedPreferences(\n        \"startio_privacy_preferences\",\n        Context.MODE_PRIVATE\n    )\n\n    companion object {\n        private const val TAG = \"StartIoConsent\"\n        private const val KEY_SAVED = \"consent_saved\"\n        private const val KEY_PERSONALIZED = \"personalized_ads\"\n        private const val KEY_TIMESTAMP = \"consent_timestamp\"\n    }\n\n    val canRequestAds: Boolean\n        get() = preferences.getBoolean(KEY_SAVED, false)\n\n    val isPrivacyOptionsRequired: Boolean\n        get() = true\n\n    private fun applyConsent(granted: Boolean) {\n        val timestamp = preferences.getLong(\n            KEY_TIMESTAMP,\n            System.currentTimeMillis()\n        )\n\n        try {\n            StartAppSDK.setUserConsent(\n                appContext,\n                \"pas\",\n                timestamp,\n                granted\n            )\n\n            Log.i(TAG, \"Consent submitted: $granted\")\n        } catch (e: Exception) {\n            Log.e(TAG, \"Could not submit consent\", e)\n        }\n    }\n\n    private fun saveConsent(granted: Boolean) {\n        preferences.edit()\n            .putBoolean(KEY_SAVED, true)\n            .putBoolean(KEY_PERSONALIZED, granted)\n            .putLong(KEY_TIMESTAMP, System.currentTimeMillis())\n            .apply()\n\n        applyConsent(granted)\n    }\n\n    fun gatherConsent(\n        activity: Activity,\n        onConsentGathered: () -> Unit\n    ) {\n        if (preferences.getBoolean(KEY_SAVED, false)) {\n            val granted = preferences.getBoolean(\n                KEY_PERSONALIZED,\n                false\n            )\n\n            applyConsent(granted)\n            onConsentGathered()\n            return\n        }\n\n        showConsentDialog(activity, onConsentGathered)\n    }\n\n    fun showPrivacyOptionsForm(\n        activity: Activity,\n        onComplete: () -> Unit\n    ) {\n        showConsentDialog(activity, onComplete)\n    }\n\n    private fun showConsentDialog(\n        activity: Activity,\n        onComplete: () -> Unit\n    ) {\n        if (activity.isFinishing || activity.isDestroyed) {\n            return\n        }\n\n        var completed = false\n\n        fun finish(granted: Boolean) {\n            if (completed) return\n            completed = true\n\n            saveConsent(granted)\n            onComplete()\n        }\n\n        AlertDialog.Builder(activity)\n            .setTitle(\"Advertising Privacy Choices\")\n            .setMessage(\n                \"Learn Korean Language uses Start.io advertising.\\n\\n\" +\n                \"Start.io may process information such as device \" +\n                \"identifiers, IP address, device information and \" +\n                \"other information described in its privacy policy.\\n\\n\" +\n                \"Choose whether to allow personalized advertising. \" +\n                \"If you decline, non-personalized or contextual ads \" +\n                \"may still be available.\\n\\n\" +\n                \"Privacy policy:\\n\" +\n                \"https://www.start.io/policy/privacy-policy/\"\n            )\n            .setPositiveButton(\"Allow Personalized Ads\") { _, _ ->\n                finish(true)\n            }\n            .setNegativeButton(\"Continue Without Personalized Ads\") { _, _ ->\n                finish(false)\n            }\n            .setOnCancelListener {\n                finish(false)\n            }\n            .show()\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/RewardedInterstitialAdManager.kt',
-    category: 'kotlin',
-    description: 'Rewarded Interstitial Ad Manager with SDK reward verification',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.app.Activity
-import android.content.Context
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.rewardedinterstitial.*
-
-class RewardedInterstitialAdManager(private val context: Context) {
-    private var rewardedInterstitialAd: RewardedInterstitialAd? = null
-    private var isLoading = false
-
-    init { loadAd() }
-
-    fun loadAd() {
-        if (isLoading || rewardedInterstitialAd != null) return
-        isLoading = true
-        val adRequest = AdRequest.Builder().build()
-        RewardedInterstitialAd.load(
-            context,
-            AdConfig.getRewardedInterstitialAdUnitId(),
-            adRequest,
-            object : RewardedInterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: RewardedInterstitialAd) {
-                    rewardedInterstitialAd = ad
-                    isLoading = false
-                }
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    rewardedInterstitialAd = null
-                    isLoading = false
-                }
-            }
-        )
-    }
-
-    val isAdAvailable: Boolean get() = rewardedInterstitialAd != null
-
-    fun show(
-        activity: Activity,
-        onRewardEarned: (rewardType: String, amount: Int) -> Unit,
-        onAdClosed: () -> Unit
-    ) {
-        val ad = rewardedInterstitialAd
-        if (ad == null) {
-            loadAd()
-            onAdClosed()
-            return
-        }
-
-        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                rewardedInterstitialAd = null
-                loadAd()
-                onAdClosed()
-            }
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                rewardedInterstitialAd = null
-                loadAd()
-                onAdClosed()
-            }
-        }
-
-        ad.show(activity) { rewardItem ->
-            onRewardEarned(rewardItem.type, rewardItem.amount)
-        }
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/InterstitialAdManager.kt",
+    category: "kotlin",
+    description: "Deferred Start.io Interstitial ad manager with 3-lesson threshold",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport android.app.Activity\nimport android.content.Context\nimport android.util.Log\nimport com.startapp.sdk.adsbase.Ad\nimport com.startapp.sdk.adsbase.StartAppAd\nimport com.startapp.sdk.adsbase.adlisteners.AdDisplayListener\nimport com.startapp.sdk.adsbase.adlisteners.AdEventListener\n\n/**\n * Manages loading and displaying Start.io Interstitial ads.\n * Displayed every 3 completed lessons outside of quiz flows.\n */\nclass InterstitialAdManager(private val context: Context) {\n\n    private var interstitialAd: StartAppAd? = null\n    private var isLoading = false\n    private var isWaitingForSdk = false\n    private var completedLessonCount = 0\n\n    private val lessonThreshold = 3\n\n    init {\n        // Register load listener that fires ONLY after SDK initialization completes\n        StartIoSdkState.runWhenReady {\n            loadAd()\n        }\n    }\n\n    fun loadAd() {\n        if (!StartIoSdkState.isSdkReady()) {\n            if (!isWaitingForSdk) {\n                isWaitingForSdk = true\n                Log.d(AdConfig.TAG_INTERSTITIAL, \"SDK not ready yet. Queuing interstitial request...\")\n                StartIoSdkState.runWhenReady {\n                    isWaitingForSdk = false\n                    loadAd()\n                }\n            }\n            return\n        }\n\n        if (isLoading) {\n            Log.d(AdConfig.TAG_INTERSTITIAL, \"Interstitial is already loading.\")\n            return\n        }\n\n        if (interstitialAd != null) {\n            Log.d(AdConfig.TAG_INTERSTITIAL, \"Interstitial is already cached.\")\n            return\n        }\n\n        isLoading = true\n        Log.i(AdConfig.TAG_INTERSTITIAL, \"Requesting Start.io Interstitial ad...\")\n\n        val newAd = StartAppAd(context)\n\n        try {\n            newAd.loadAd(object : AdEventListener {\n                override fun onReceiveAd(ad: Ad) {\n                    interstitialAd = newAd\n                    isLoading = false\n                    Log.i(AdConfig.TAG_INTERSTITIAL, \"Start.io Interstitial ad loaded successfully\")\n                }\n\n                override fun onFailedToReceiveAd(ad: Ad?) {\n                    interstitialAd = null\n                    isLoading = false\n                    val errorMsg = ad?.errorMessage ?: \"No ad fill or network error\"\n                    Log.w(AdConfig.TAG_INTERSTITIAL, \"Start.io Interstitial failed to load: $errorMsg\")\n                }\n            })\n        } catch (e: Exception) {\n            isLoading = false\n            Log.e(AdConfig.TAG_INTERSTITIAL, \"Exception while requesting Interstitial: ${e.message}\", e)\n        }\n    }\n\n    fun showIfAllowed(\n        activity: Activity,\n        isQuizActive: Boolean,\n        onDismissed: () -> Unit\n    ) {\n        if (isQuizActive) {\n            onDismissed()\n            return\n        }\n\n        completedLessonCount++\n        Log.d(\n            AdConfig.TAG_INTERSTITIAL,\n            \"Lesson completed ($completedLessonCount / $lessonThreshold threshold)\"\n        )\n\n        if (completedLessonCount < lessonThreshold) {\n            onDismissed()\n            return\n        }\n\n        val ad = interstitialAd\n\n        if (ad == null) {\n            Log.w(AdConfig.TAG_INTERSTITIAL, \"Interstitial not ready at lesson threshold. Preloading...\")\n            loadAd()\n            onDismissed()\n            return\n        }\n\n        var finished = false\n\n        fun finish() {\n            if (finished) return\n            finished = true\n            interstitialAd = null\n            completedLessonCount = 0\n            // Preload next interstitial\n            loadAd()\n            onDismissed()\n        }\n\n        try {\n            ad.showAd(object : AdDisplayListener {\n                override fun adDisplayed(ad: Ad) {\n                    Log.i(AdConfig.TAG_INTERSTITIAL, \"Interstitial ad displayed on screen\")\n                }\n\n                override fun adHidden(ad: Ad) {\n                    Log.i(AdConfig.TAG_INTERSTITIAL, \"Interstitial ad closed by user\")\n                    finish()\n                }\n\n                override fun adClicked(ad: Ad) {\n                    Log.d(AdConfig.TAG_INTERSTITIAL, \"Interstitial ad clicked\")\n                }\n\n                override fun adNotDisplayed(ad: Ad) {\n                    Log.e(AdConfig.TAG_INTERSTITIAL, \"Interstitial ad could not be displayed\")\n                    finish()\n                }\n            })\n        } catch (e: Exception) {\n            Log.e(AdConfig.TAG_INTERSTITIAL, \"Exception while showing interstitial: ${e.message}\", e)\n            finish()\n        }\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/AppOpenAdManager.kt',
-    category: 'kotlin',
-    description: 'App Open Ad Manager for warm/cold app launch lifecycle',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.app.Activity
-import android.app.Application
-import android.content.Context
-import android.os.Bundle
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.appopen.AppOpenAd
-import java.util.Date
-
-class AppOpenAdManager(private val application: Application) :
-    Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
-
-    private var appOpenAd: AppOpenAd? = null
-    private var isLoading = false
-    private var isShowingAd = false
-    private var loadTime: Long = 0
-    private var currentActivity: Activity? = null
-
-    init {
-        application.registerActivityLifecycleCallbacks(this)
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        super.onStart(owner)
-        currentActivity?.let { showAdIfAvailable(it) }
-    }
-
-    fun loadAd(context: Context) {
-        if (isLoading || isAdAvailable()) return
-        isLoading = true
-        val request = AdRequest.Builder().build()
-        AppOpenAd.load(
-            context,
-            AdConfig.getAppOpenAdUnitId(),
-            request,
-            object : AppOpenAd.AppOpenAdLoadCallback() {
-                override fun onAdLoaded(ad: AppOpenAd) {
-                    appOpenAd = ad
-                    isLoading = false
-                    loadTime = Date().time
-                }
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    isLoading = false
-                    appOpenAd = null
-                }
-            }
-        )
-    }
-
-    private fun isAdAvailable(): Boolean {
-        val numHours = (Date().time - loadTime)
-        return appOpenAd != null && numHours < (4 * 3600 * 1000)
-    }
-
-    fun showAdIfAvailable(activity: Activity) {
-        if (isShowingAd) return
-        if (!isAdAvailable()) { loadAd(activity); return }
-
-        appOpenAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                appOpenAd = null
-                isShowingAd = false
-                loadAd(activity)
-            }
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                appOpenAd = null
-                isShowingAd = false
-                loadAd(activity)
-            }
-            override fun onAdShowedFullScreenContent() { isShowingAd = true }
-        }
-        appOpenAd?.show(activity)
-    }
-
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-    override fun onActivityStarted(activity: Activity) { currentActivity = activity }
-    override fun onActivityResumed(activity: Activity) { currentActivity = activity }
-    override fun onActivityPaused(activity: Activity) {}
-    override fun onActivityStopped(activity: Activity) {}
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-    override fun onActivityDestroyed(activity: Activity) {
-        if (currentActivity == activity) currentActivity = null
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ads/RewardedInterstitialAdManager.kt",
+    category: "kotlin",
+    description: "Start.io Rewarded Video manager with +150 XP bonus unlock",
+    content: "package com.shahabmillizai.learnkorean.ads\n\nimport android.app.Activity\nimport android.content.Context\nimport android.util.Log\nimport com.startapp.sdk.adsbase.Ad\nimport com.startapp.sdk.adsbase.StartAppAd\nimport com.startapp.sdk.adsbase.StartAppAd.AdMode\nimport com.startapp.sdk.adsbase.VideoListener\nimport com.startapp.sdk.adsbase.adlisteners.AdDisplayListener\nimport com.startapp.sdk.adsbase.adlisteners.AdEventListener\n\n/**\n * Manages loading and displaying Start.io Rewarded Video ads.\n * Ad requests are strictly deferred until StartIoSdkState confirms SDK readiness.\n */\nclass RewardedInterstitialAdManager(\n    private val context: Context\n) {\n    private var rewardedAd: StartAppAd? = null\n    private var isLoading = false\n    private var isWaitingForSdk = false\n\n    companion object {\n        const val REWARD_AMOUNT = 150\n    }\n\n    init {\n        // Register load listener that fires ONLY after SDK initialization completes\n        StartIoSdkState.runWhenReady {\n            loadAd()\n        }\n    }\n\n    fun loadAd() {\n        if (!StartIoSdkState.isSdkReady()) {\n            if (!isWaitingForSdk) {\n                isWaitingForSdk = true\n                Log.d(AdConfig.TAG_REWARDED, \"SDK not ready yet. Queuing rewarded video request...\")\n                StartIoSdkState.runWhenReady {\n                    isWaitingForSdk = false\n                    loadAd()\n                }\n            }\n            return\n        }\n\n        if (isLoading) {\n            Log.d(AdConfig.TAG_REWARDED, \"Rewarded video is already loading, skipping request.\")\n            return\n        }\n\n        if (rewardedAd != null) {\n            Log.d(AdConfig.TAG_REWARDED, \"Rewarded video is already cached and ready to show.\")\n            return\n        }\n\n        isLoading = true\n        Log.i(AdConfig.TAG_REWARDED, \"Requesting Start.io Rewarded Video (AdMode.REWARDED_VIDEO)...\")\n\n        val newAd = StartAppAd(context)\n\n        try {\n            newAd.loadAd(\n                AdMode.REWARDED_VIDEO,\n                object : AdEventListener {\n                    override fun onReceiveAd(ad: Ad) {\n                        rewardedAd = newAd\n                        isLoading = false\n                        Log.i(\n                            AdConfig.TAG_REWARDED,\n                            \"Start.io Rewarded Video loaded successfully and ready to display\"\n                        )\n                    }\n\n                    override fun onFailedToReceiveAd(ad: Ad?) {\n                        rewardedAd = null\n                        isLoading = false\n                        val errorMsg = ad?.errorMessage ?: \"No ad fill or network error\"\n                        Log.w(\n                            AdConfig.TAG_REWARDED,\n                            \"Start.io Rewarded Video failed to load: $errorMsg\"\n                        )\n                    }\n                }\n            )\n        } catch (e: Exception) {\n            isLoading = false\n            Log.e(AdConfig.TAG_REWARDED, \"Exception while requesting Rewarded Video: ${e.message}\", e)\n        }\n    }\n\n    val isAdAvailable: Boolean\n        get() = rewardedAd != null\n\n    val isAdLoading: Boolean\n        get() = isLoading\n\n    fun show(\n        activity: Activity,\n        onRewardEarned: (rewardType: String, amount: Int) -> Unit,\n        onAdClosed: () -> Unit,\n        onAdNotReady: () -> Unit\n    ) {\n        val ad = rewardedAd\n\n        if (ad == null) {\n            Log.w(AdConfig.TAG_REWARDED, \"No rewarded video ad cached when show() called. Initiating reload.\")\n            loadAd()\n            onAdNotReady()\n            return\n        }\n\n        var rewardGranted = false\n        var finished = false\n\n        fun finish() {\n            if (finished) return\n            finished = true\n            rewardedAd = null\n            // Preload next rewarded ad in the background\n            loadAd()\n            onAdClosed()\n        }\n\n        try {\n            ad.setVideoListener(object : VideoListener {\n                override fun onVideoCompleted() {\n                    if (!rewardGranted) {\n                        rewardGranted = true\n                        Log.i(\n                            AdConfig.TAG_REWARDED,\n                            \"Rewarded video completed! Granting $REWARD_AMOUNT XP reward.\"\n                        )\n                        onRewardEarned(\"topik_bonus_unlock\", REWARD_AMOUNT)\n                    }\n                }\n            })\n\n            ad.showAd(object : AdDisplayListener {\n                override fun adDisplayed(ad: Ad) {\n                    Log.i(AdConfig.TAG_REWARDED, \"Rewarded video displayed on screen\")\n                }\n\n                override fun adHidden(ad: Ad) {\n                    Log.i(AdConfig.TAG_REWARDED, \"Rewarded video closed by user\")\n                    finish()\n                }\n\n                override fun adClicked(ad: Ad) {\n                    Log.d(AdConfig.TAG_REWARDED, \"Rewarded video clicked by user\")\n                }\n\n                override fun adNotDisplayed(ad: Ad) {\n                    Log.e(AdConfig.TAG_REWARDED, \"Rewarded video could not be displayed\")\n                    finish()\n                }\n            })\n        } catch (e: Exception) {\n            Log.e(AdConfig.TAG_REWARDED, \"Exception while showing rewarded ad: ${e.message}\", e)\n            finish()\n        }\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/NativeAdView.kt',
-    category: 'kotlin',
-    description: 'Official Google Mobile Ads Native Ad View with required AD badge',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.widget.Button
-import android.widget.TextView
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.nativead.*
-
-@Composable
-fun KoreanNativeAdCard(
-    modifier: Modifier = Modifier,
-    adUnitId: String = AdConfig.getNativeAdUnitId()
-) {
-    val context = LocalContext.current
-    var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
-    var isLoaded by remember { mutableStateOf(false) }
-
-    DisposableEffect(adUnitId) {
-        val adLoader = AdLoader.Builder(context, adUnitId)
-            .forNativeAd { ad ->
-                nativeAd?.destroy()
-                nativeAd = ad
-                isLoaded = true
-            }
-            .withAdListener(object : AdListener() {
-                override fun onAdFailedToLoad(error: LoadAdError) { isLoaded = false }
-            })
-            .build()
-        adLoader.loadAd(AdRequest.Builder().build())
-
-        onDispose { nativeAd?.destroy() }
-    }
-
-    if (isLoaded && nativeAd != null) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
-                .padding(14.dp)
-        ) {
-            AndroidView(
-                factory = { ctx ->
-                    val adView = NativeAdView(ctx)
-                    val container = android.widget.LinearLayout(ctx).apply { orientation = android.widget.LinearLayout.VERTICAL }
-                    val badge = TextView(ctx).apply {
-                        text = "SPONSORED AD"
-                        textSize = 10f
-                        setTextColor(android.graphics.Color.WHITE)
-                        setBackgroundColor(android.graphics.Color.parseColor("#CD2E3A"))
-                        setPadding(12, 4, 12, 4)
-                    }
-                    container.addView(badge)
-                    val headline = TextView(ctx).apply {
-                        textSize = 15f
-                        setTypeface(null, android.graphics.Typeface.BOLD)
-                        setTextColor(android.graphics.Color.parseColor("#0F172A"))
-                        setPadding(0, 8, 0, 4)
-                    }
-                    container.addView(headline)
-                    adView.headlineView = headline
-                    val body = TextView(ctx).apply {
-                        textSize = 13f
-                        setTextColor(android.graphics.Color.parseColor("#475569"))
-                        setPadding(0, 0, 0, 8)
-                    }
-                    container.addView(body)
-                    adView.bodyView = body
-                    val cta = Button(ctx).apply {
-                        setBackgroundColor(android.graphics.Color.parseColor("#0047A0"))
-                        setTextColor(android.graphics.Color.WHITE)
-                    }
-                    container.addView(cta)
-                    adView.callToActionView = cta
-                    adView.addView(container)
-                    adView
-                },
-                update = { view ->
-                    val ad = nativeAd ?: return@AndroidView
-                    (view.headlineView as? TextView)?.text = ad.headline
-                    (view.bodyView as? TextView)?.text = ad.body
-                    (view.callToActionView as? Button)?.text = ad.callToAction ?: "Learn More"
-                    view.setNativeAd(ad)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/LearnKoreanApp.kt",
+    category: "kotlin",
+    description: "Application class with clean code-based Start.io init architecture",
+    content: "\npackage com.shahabmillizai.learnkorean\n\nimport android.app.Application\n\nclass LearnKoreanApp : Application() {\n\n    override fun onCreate() {\n        super.onCreate()\n\n        // Start.io is initialized in MainActivity\n        // only after the user's advertising privacy choice.\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/ads/ConsentManager.kt',
-    category: 'kotlin',
-    description: 'Google User Messaging Platform (UMP) consent manager',
-    content: `package com.shahabmillizai.learnkorean.ads
-
-import android.app.Activity
-import android.content.Context
-import com.google.android.ump.*
-
-class ConsentManager(private val context: Context) {
-    private val consentInformation: ConsentInformation = UserMessagingPlatform.getConsentInformation(context)
-
-    fun gatherConsent(activity: Activity, onConsentGathered: () -> Unit) {
-        val params = ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build()
-        consentInformation.requestConsentInfoUpdate(
-            activity,
-            params,
-            {
-                UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) { onConsentGathered() }
-            },
-            { onConsentGathered() }
-        )
-    }
-
-    val canRequestAds: Boolean get() = consentInformation.canRequestAds()
-    val isPrivacyOptionsRequired: Boolean
-        get() = consentInformation.privacyOptionsRequirementStatus ==
-                ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED
-
-    fun showPrivacyOptionsForm(activity: Activity, onComplete: () -> Unit) {
-        UserMessagingPlatform.showPrivacyOptionsForm(activity) { onComplete() }
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/MainActivity.kt",
+    category: "kotlin",
+    description: "ComponentActivity with callback-gated Start.io initialization",
+    content: "package com.shahabmillizai.learnkorean\n\nimport android.os.Bundle\nimport android.util.Log\nimport androidx.activity.ComponentActivity\nimport androidx.activity.compose.setContent\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.material3.CircularProgressIndicator\nimport androidx.compose.material3.MaterialTheme\nimport androidx.compose.material3.Surface\nimport androidx.compose.material3.Text\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.unit.dp\n\nimport com.shahabmillizai.learnkorean.ads.AdConfig\nimport com.shahabmillizai.learnkorean.ads.ConsentManager\nimport com.shahabmillizai.learnkorean.ads.InterstitialAdManager\nimport com.shahabmillizai.learnkorean.ads.RewardedInterstitialAdManager\nimport com.shahabmillizai.learnkorean.ads.StartIoSdkState\nimport com.shahabmillizai.learnkorean.data.local.UserPreferences\nimport com.shahabmillizai.learnkorean.data.repository.KoreanRepository\nimport com.shahabmillizai.learnkorean.tts.KoreanTtsManager\nimport com.shahabmillizai.learnkorean.ui.navigation.MainAppNavigation\nimport com.shahabmillizai.learnkorean.ui.theme.LearnKoreanTheme\nimport com.startapp.sdk.adsbase.StartAppSDK\n\nclass MainActivity : ComponentActivity() {\n\n    private lateinit var ttsManager: KoreanTtsManager\n    private lateinit var consentManager: ConsentManager\n    private lateinit var interstitialManager: InterstitialAdManager\n    private lateinit var rewardedManager: RewardedInterstitialAdManager\n    private lateinit var repository: KoreanRepository\n\n    private var appReady by mutableStateOf(false)\n    private var sdkInitializationStarted = false\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n        val userPreferences = UserPreferences(this)\n        repository = KoreanRepository(this, userPreferences)\n        ttsManager = KoreanTtsManager(this)\n        consentManager = ConsentManager(this)\n\n        // Instantiate ad managers (they internally wait for StartIoSdkState.isReady before loading)\n        interstitialManager = InterstitialAdManager(this)\n        rewardedManager = RewardedInterstitialAdManager(this)\n\n        setContent {\n            LearnKoreanTheme {\n                Surface(\n                    modifier = Modifier.fillMaxSize(),\n                    color = MaterialTheme.colorScheme.background\n                ) {\n                    if (appReady) {\n                        MainAppNavigation(\n                            repository = repository,\n                            ttsManager = ttsManager,\n                            interstitialManager = interstitialManager,\n                            rewardedManager = rewardedManager,\n                            consentManager = consentManager\n                        )\n                    } else {\n                        Box(\n                            modifier = Modifier.fillMaxSize(),\n                            contentAlignment = Alignment.Center\n                        ) {\n                            Column(\n                                horizontalAlignment = Alignment.CenterHorizontally,\n                                verticalArrangement = Arrangement.spacedBy(12.dp)\n                            ) {\n                                CircularProgressIndicator()\n                                Text(\"Preparing Learn Korean...\")\n                            }\n                        }\n                    }\n                }\n            }\n        }\n\n        // Gather consent first, then initiate Start.io SDK\n        consentManager.gatherConsent(this) {\n            initializeStartIo()\n        }\n\n        // App content is ready to render\n        appReady = true\n    }\n\n    private fun initializeStartIo() {\n        if (sdkInitializationStarted) return\n        if (isFinishing || isDestroyed) return\n\n        sdkInitializationStarted = true\n\n        try {\n            if (AdConfig.forceTestMode) {\n                StartAppSDK.setTestAdsEnabled(true)\n                Log.d(AdConfig.TAG_SDK, \"Start.io test ads enabled for debug environment\")\n            }\n\n            Log.i(\n                AdConfig.TAG_SDK,\n                \"Initializing Start.io SDK (App ID: ${AdConfig.START_IO_APP_ID})...\"\n            )\n\n            StartAppSDK.initParams(\n                applicationContext,\n                AdConfig.START_IO_APP_ID\n            )\n                .setReturnAdsEnabled(false)\n                .setCallback(Runnable {\n                    runOnUiThread {\n                        Log.i(\n                            AdConfig.TAG_SDK,\n                            \"Start.io SDK initialization callback confirmed success\"\n                        )\n                        StartIoSdkState.markReady()\n                    }\n                })\n                .init()\n\n        } catch (e: Exception) {\n            Log.e(\n                AdConfig.TAG_SDK,\n                \"Start.io SDK initialization failed with exception: ${e.message}\",\n                e\n            )\n            // CRITICAL: Do NOT mark SDK as ready on failure\n            StartIoSdkState.markFailed(e.message ?: \"Initialization exception\")\n        }\n    }\n\n    override fun onResume() {\n        super.onResume()\n\n        if (StartIoSdkState.isSdkReady()) {\n            if (::interstitialManager.isInitialized) {\n                interstitialManager.loadAd()\n            }\n            if (::rewardedManager.isInitialized) {\n                rewardedManager.loadAd()\n            }\n        }\n    }\n\n    override fun onDestroy() {\n        super.onDestroy()\n\n        if (::ttsManager.isInitialized) {\n            ttsManager.shutdown()\n        }\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/LearnKoreanApp.kt',
-    category: 'kotlin',
-    description: 'Application class initializing MobileAds & AppOpenAd',
-    content: `package com.shahabmillizai.learnkorean
-
-import android.app.Application
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
-import com.shahabmillizai.learnkorean.ads.AppOpenAdManager
-
-class LearnKoreanApp : Application() {
-    lateinit var appOpenAdManager: AppOpenAdManager
-        private set
-
-    override fun onCreate() {
-        super.onCreate()
-        MobileAds.initialize(this) {}
-        if (BuildConfig.DEBUG) {
-            val config = RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf(RequestConfiguration.DEVICE_ID_EMULATOR))
-                .build()
-            MobileAds.setRequestConfiguration(config)
-        }
-        appOpenAdManager = AppOpenAdManager(this)
-    }
-}
-`
+    path: "app/src/main/java/com/shahabmillizai/learnkorean/ui/screens/HomeScreen.kt",
+    category: "kotlin",
+    description: "Home screen displaying Large MREC (300x250) Start.io banner at bottom",
+    content: "\npackage com.shahabmillizai.learnkorean.ui.screens\n\nimport android.app.Activity\nimport android.content.Context\nimport android.content.ContextWrapper\nimport android.util.Log\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.*\nimport androidx.compose.foundation.lazy.LazyColumn\nimport androidx.compose.foundation.lazy.items\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material.icons.filled.Bolt\nimport androidx.compose.material.icons.filled.CardGiftcard\nimport androidx.compose.material.icons.filled.ChevronRight\nimport androidx.compose.material.icons.filled.LocalFireDepartment\nimport androidx.compose.material.icons.filled.VolumeUp\nimport androidx.compose.material3.*\nimport androidx.compose.runtime.*\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.clip\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.sp\nimport com.shahabmillizai.learnkorean.ads.BannerAdView\nimport com.shahabmillizai.learnkorean.ads.StartIoBannerSize\nimport com.shahabmillizai.learnkorean.ads.RewardedInterstitialAdManager\nimport com.shahabmillizai.learnkorean.data.repository.KoreanRepository\nimport com.shahabmillizai.learnkorean.tts.KoreanTtsManager\nimport com.shahabmillizai.learnkorean.ui.theme.TaegeukBlue\nimport com.shahabmillizai.learnkorean.ui.theme.TaegeukRed\nimport com.shahabmillizai.learnkorean.ui.theme.UrduEmerald\n\nprivate tailrec fun Context.findActivity(): Activity? {\n    return when (this) {\n        is Activity -> this\n        is ContextWrapper -> baseContext.findActivity()\n        else -> null\n    }\n}\n\n@Composable\nfun HomeScreen(\n    repository: KoreanRepository,\n    ttsManager: KoreanTtsManager,\n    rewardedManager: RewardedInterstitialAdManager,\n    onNavigateToLesson: (String) -> Unit,\n    onNavigateToPractice: () -> Unit\n) {\n    val context = LocalContext.current\n    val activity = remember(context) { context.findActivity() }\n\n    val progress by repository.userPreferences.progressFlow.collectAsState()\n    val levels = remember { repository.getLevels() }\n\n    var showRewardDialog by remember { mutableStateOf(false) }\n    var showRewardMessage by remember { mutableStateOf(false) }\n    var rewardMessage by remember { mutableStateOf(\"\") }\n\n    Column(\n        modifier = Modifier\n            .fillMaxSize()\n            .background(MaterialTheme.colorScheme.background)\n    ) {\n        LazyColumn(\n            modifier = Modifier\n                .weight(1f)\n                .fillMaxWidth(),\n            contentPadding = PaddingValues(16.dp),\n            verticalArrangement = Arrangement.spacedBy(16.dp)\n        ) {\n            item {\n                Row(\n                    modifier = Modifier.fillMaxWidth(),\n                    horizontalArrangement = Arrangement.SpaceBetween,\n                    verticalAlignment = Alignment.CenterVertically\n                ) {\n                    Column {\n                        Text(\n                            text = \"Learn Korean\",\n                            style = MaterialTheme.typography.headlineMedium,\n                            fontWeight = FontWeight.Bold\n                        )\n                        Text(\n                            text = \"By Shahab Millizai\",\n                            style = MaterialTheme.typography.bodyMedium,\n                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)\n                        )\n                    }\n\n                    Column(\n                        horizontalAlignment = Alignment.End,\n                        verticalArrangement = Arrangement.spacedBy(6.dp)\n                    ) {\n                        Row(\n                            verticalAlignment = Alignment.CenterVertically,\n                            horizontalArrangement = Arrangement.spacedBy(4.dp)\n                        ) {\n                            Icon(\n                                Icons.Default.LocalFireDepartment,\n                                contentDescription = \"Streak\",\n                                tint = TaegeukRed,\n                                modifier = Modifier.size(18.dp)\n                            )\n                            Text(\n                                \"${progress.streakDays}d Streak\",\n                                color = TaegeukRed,\n                                fontWeight = FontWeight.Bold,\n                                fontSize = 12.sp\n                            )\n                        }\n\n                        Row(\n                            verticalAlignment = Alignment.CenterVertically,\n                            horizontalArrangement = Arrangement.spacedBy(4.dp)\n                        ) {\n                            Icon(\n                                Icons.Default.Bolt,\n                                contentDescription = \"XP\",\n                                tint = TaegeukBlue,\n                                modifier = Modifier.size(18.dp)\n                            )\n                            Text(\n                                \"${progress.xp} XP\",\n                                color = TaegeukBlue,\n                                fontWeight = FontWeight.Bold,\n                                fontSize = 12.sp\n                            )\n                        }\n                    }\n                }\n            }\n\n            item {\n                Card(\n                    modifier = Modifier.fillMaxWidth(),\n                    shape = RoundedCornerShape(20.dp)\n                ) {\n                    Column(\n                        modifier = Modifier.padding(18.dp),\n                        verticalArrangement = Arrangement.spacedBy(10.dp)\n                    ) {\n                        Row(\n                            modifier = Modifier.fillMaxWidth(),\n                            horizontalArrangement = Arrangement.SpaceBetween,\n                            verticalAlignment = Alignment.CenterVertically\n                        ) {\n                            Text(\n                                \"DAILY WORD OF THE DAY\",\n                                color = TaegeukBlue,\n                                fontWeight = FontWeight.Bold,\n                                fontSize = 12.sp\n                            )\n\n                            IconButton(\n                                onClick = {\n                                    ttsManager.speakKorean(\"안녕하세요\")\n                                }\n                            ) {\n                                Icon(\n                                    Icons.Default.VolumeUp,\n                                    contentDescription = \"Listen\",\n                                    tint = TaegeukBlue\n                                )\n                            }\n                        }\n\n                        Text(\n                            \"안녕하세요\",\n                            fontSize = 32.sp,\n                            fontWeight = FontWeight.Bold\n                        )\n\n                        Text(\n                            \"Annyeonghaseyo\",\n                            fontSize = 16.sp,\n                            color = MaterialTheme.colorScheme.onSurfaceVariant\n                        )\n\n                        HorizontalDivider()\n\n                        Text(\n                            \"English: Hello / Peace be with you\",\n                            fontSize = 14.sp\n                        )\n\n                        Text(\n                            \"اردو: ہیلو / السلام علیکم\",\n                            color = UrduEmerald,\n                            fontSize = 15.sp,\n                            fontWeight = FontWeight.SemiBold\n                        )\n                    }\n                }\n            }\n\n            item {\n                Card(\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .clickable { onNavigateToPractice() },\n                    shape = RoundedCornerShape(16.dp),\n                    colors = CardDefaults.cardColors(\n                        containerColor = TaegeukRed.copy(alpha = 0.08f)\n                    )\n                ) {\n                    Row(\n                        modifier = Modifier.padding(16.dp),\n                        verticalAlignment = Alignment.CenterVertically,\n                        horizontalArrangement = Arrangement.spacedBy(12.dp)\n                    ) {\n                        Box(\n                            modifier = Modifier\n                                .size(46.dp)\n                                .clip(RoundedCornerShape(12.dp))\n                                .background(TaegeukRed),\n                            contentAlignment = Alignment.Center\n                        ) {\n                            Text(\n                                \"한\",\n                                color = Color.White,\n                                fontSize = 22.sp,\n                                fontWeight = FontWeight.Bold\n                            )\n                        }\n\n                        Column(modifier = Modifier.weight(1f)) {\n                            Text(\n                                \"Hangul Alphabet Trainer\",\n                                fontWeight = FontWeight.Bold\n                            )\n                            Text(\n                                \"Practice Korean consonants and vowels\",\n                                fontSize = 12.sp,\n                                color = MaterialTheme.colorScheme.onSurfaceVariant\n                            )\n                        }\n\n                        Icon(\n                            Icons.Default.ChevronRight,\n                            contentDescription = \"Open practice\"\n                        )\n                    }\n                }\n            }\n\n            item {\n                Card(\n                    modifier = Modifier.fillMaxWidth(),\n                    shape = RoundedCornerShape(16.dp)\n                ) {\n                    Row(\n                        modifier = Modifier.padding(16.dp),\n                        verticalAlignment = Alignment.CenterVertically,\n                        horizontalArrangement = Arrangement.spacedBy(12.dp)\n                    ) {\n                        Icon(\n                            Icons.Default.CardGiftcard,\n                            contentDescription = \"Bonus reward\",\n                            tint = TaegeukBlue,\n                            modifier = Modifier.size(32.dp)\n                        )\n\n                        Column(modifier = Modifier.weight(1f)) {\n                            Text(\n                                text = if (progress.isBonusPackUnlocked) {\n                                    \"Bonus TOPIK Pack Unlocked!\"\n                                } else {\n                                    \"Bonus TOPIK Vocabulary Pack\"\n                                },\n                                fontWeight = FontWeight.Bold,\n                                fontSize = 14.sp\n                            )\n\n                            Text(\n                                text = if (progress.isBonusPackUnlocked) {\n                                    \"You unlocked the bonus pack and earned 150 XP.\"\n                                } else {\n                                    \"Watch a rewarded video to earn 150 XP and bonus phrases.\"\n                                },\n                                fontSize = 12.sp,\n                                color = MaterialTheme.colorScheme.onSurfaceVariant\n                            )\n                        }\n\n                        if (!progress.isBonusPackUnlocked) {\n                            Button(\n                                onClick = {\n                                    showRewardDialog = true\n                                },\n                                colors = ButtonDefaults.buttonColors(\n                                    containerColor = TaegeukBlue\n                                )\n                            ) {\n                                Text(\"Unlock\")\n                            }\n                        }\n                    }\n                }\n            }\n\n            item {\n                Text(\n                    \"Core Curriculum (4 Levels)\",\n                    style = MaterialTheme.typography.titleLarge,\n                    fontWeight = FontWeight.Bold\n                )\n            }\n\n            items(levels) { level ->\n                Card(\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .clickable {\n                            onNavigateToLesson(\n                                level.lessons.firstOrNull()?.id ?: \"beg_01\"\n                            )\n                        },\n                    shape = RoundedCornerShape(16.dp)\n                ) {\n                    Column(\n                        modifier = Modifier.padding(16.dp),\n                        verticalArrangement = Arrangement.spacedBy(8.dp)\n                    ) {\n                        Row(\n                            modifier = Modifier.fillMaxWidth(),\n                            horizontalArrangement = Arrangement.SpaceBetween,\n                            verticalAlignment = Alignment.CenterVertically\n                        ) {\n                            Text(\n                                level.name,\n                                fontWeight = FontWeight.Bold,\n                                fontSize = 16.sp\n                            )\n\n                            Text(\n                                level.koreanName,\n                                color = TaegeukRed,\n                                fontWeight = FontWeight.Bold\n                            )\n                        }\n\n                        Text(\n                            level.urduName,\n                            color = UrduEmerald,\n                            fontSize = 13.sp\n                        )\n\n                        Text(\n                            level.description,\n                            fontSize = 13.sp,\n                            color = MaterialTheme.colorScheme.onSurfaceVariant\n                        )\n\n                        Row(\n                            modifier = Modifier.fillMaxWidth(),\n                            horizontalArrangement = Arrangement.SpaceBetween\n                        ) {\n                            Text(\n                                \"${level.lessons.size} structured lessons\",\n                                fontSize = 12.sp,\n                                color = MaterialTheme.colorScheme.onSurfaceVariant\n                            )\n\n                            Text(\n                                \"Start Lesson →\",\n                                color = TaegeukBlue,\n                                fontWeight = FontWeight.SemiBold,\n                                fontSize = 13.sp\n                            )\n                        }\n                    }\n                }\n            }\n        }\n\n        // Large, tall Start.io MREC banner placement at the bottom of the Home screen\n        BannerAdView(bannerSize = StartIoBannerSize.LARGE_MREC)\n    }\n\n    // Rewarded video confirmation dialog\n    if (showRewardDialog) {\n        AlertDialog(\n            onDismissRequest = {\n                showRewardDialog = false\n            },\n            title = {\n                Text(\"Unlock Bonus Vocabulary Pack\")\n            },\n            text = {\n                Text(\n                    \"Watch a rewarded video to unlock 150 XP \" +\n                        \"and bonus TOPIK vocabulary.\"\n                )\n            },\n            confirmButton = {\n                Button(\n                    onClick = {\n                        showRewardDialog = false\n\n                        if (activity == null) {\n                            rewardMessage =\n                                \"Unable to open the ad. Please try again.\"\n                            showRewardMessage = true\n                        } else {\n                            rewardedManager.show(\n                                activity = activity,\n                                onRewardEarned = { _, amount ->\n                                    repository.userPreferences.unlockBonusPack()\n\n                                    rewardMessage =\n                                        \"Congratulations! You earned $amount XP and unlocked the bonus pack.\"\n\n                                    showRewardMessage = true\n                                },\n                                onAdClosed = {\n                                    Log.i(\n                                        \"HomeScreen\",\n                                        \"Rewarded ad closed\"\n                                    )\n                                },\n                                onAdNotReady = {\n                                    rewardMessage =\n                                        \"No rewarded ad is ready right now. Please try again later.\"\n                                    showRewardMessage = true\n                                }\n                            )\n                        }\n                    }\n                ) {\n                    Text(\"Watch Ad\")\n                }\n            },\n            dismissButton = {\n                TextButton(\n                    onClick = {\n                        showRewardDialog = false\n                    }\n                ) {\n                    Text(\"Cancel\")\n                }\n            }\n        )\n    }\n\n    // Reward result dialog\n    if (showRewardMessage) {\n        AlertDialog(\n            onDismissRequest = {\n                showRewardMessage = false\n            },\n            title = {\n                Text(\"Reward Status\")\n            },\n            text = {\n                Text(rewardMessage)\n            },\n            confirmButton = {\n                TextButton(\n                    onClick = {\n                        showRewardMessage = false\n                    }\n                ) {\n                    Text(\"OK\")\n                }\n            }\n        )\n    }\n}\n"
   },
   {
-    path: 'app/src/main/java/com/shahabmillizai/learnkorean/MainActivity.kt',
-    category: 'kotlin',
-    description: 'Main Jetpack Compose Activity with UMP consent and TTS lifecycle',
-    content: `package com.shahabmillizai.learnkorean
-
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.shahabmillizai.learnkorean.ads.*
-import com.shahabmillizai.learnkorean.data.local.UserPreferences
-import com.shahabmillizai.learnkorean.data.repository.KoreanRepository
-import com.shahabmillizai.learnkorean.tts.KoreanTtsManager
-import com.shahabmillizai.learnkorean.ui.navigation.MainAppNavigation
-import com.shahabmillizai.learnkorean.ui.theme.LearnKoreanTheme
-
-class MainActivity : ComponentActivity() {
-    private lateinit var ttsManager: KoreanTtsManager
-    private lateinit var consentManager: ConsentManager
-    private lateinit var interstitialManager: InterstitialAdManager
-    private lateinit var rewardedManager: RewardedInterstitialAdManager
-    private lateinit var repository: KoreanRepository
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val userPreferences = UserPreferences(this)
-        repository = KoreanRepository(this, userPreferences)
-        ttsManager = KoreanTtsManager(this)
-        interstitialManager = InterstitialAdManager(this)
-        rewardedManager = RewardedInterstitialAdManager(this)
-        consentManager = ConsentManager(this)
-
-        consentManager.gatherConsent(this) {
-            interstitialManager.loadAd()
-            rewardedManager.loadAd()
-        }
-
-        setContent {
-            LearnKoreanTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainAppNavigation(
-                        repository = repository,
-                        ttsManager = ttsManager,
-                        interstitialManager = interstitialManager,
-                        rewardedManager = rewardedManager,
-                        consentManager = consentManager
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        ttsManager.shutdown()
-    }
-}
-`
+    path: ".github/workflows/android-build.yml",
+    category: "workflow",
+    description: "GitHub Actions CI/CD release build workflow",
+    content: "\nname: Android CI/CD Build & Package\n\non:\n  push:\n    branches: [\"main\", \"master\"]\n  pull_request:\n    branches: [\"main\", \"master\"]\n  workflow_dispatch:\n\njobs:\n  build:\n    name: Build & Test Android APK\n    runs-on: ubuntu-latest\n\n    defaults:\n      run:\n        working-directory: android\n\n    steps:\n      - name: Checkout Source Code\n        uses: actions/checkout@v4\n\n      - name: Set up JDK 17\n        uses: actions/setup-java@v4\n        with:\n          java-version: '17'\n          distribution: 'temurin'\n\n      - name: Set up Gradle 8.11.1\n        uses: gradle/actions/setup-gradle@v4\n        with:\n          gradle-version: '8.11.1'\n\n      - name: Verify Gradle\n        run: gradle --version\n\n      - name: Run Unit Tests\n        run: gradle testDebugUnitTest --stacktrace\n\n      - name: Build Debug APK\n        run: gradle assembleDebug --stacktrace\n\n      - name: Restore Release Signing Key\n        run: |\n          echo \"$KEYSTORE_BASE64\" | base64 --decode > app/learnkorean-release.jks\n          test -s app/learnkorean-release.jks\n        env:\n          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}\n\n      - name: Build Signed Release APK\n        run: gradle assembleRelease --stacktrace\n        env:\n          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}\n          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}\n\n      - name: Upload Debug APK Artifact\n        if: always()\n        uses: actions/upload-artifact@v4\n        with:\n          name: learn-korean-debug-apk\n          path: android/app/build/outputs/apk/debug/*.apk\n          if-no-files-found: warn\n          retention-days: 14\n\n      - name: Upload Release APK Artifact\n        if: success()\n        uses: actions/upload-artifact@v4\n        with:\n          name: learn-korean-release-apk\n          path: android/app/build/outputs/apk/release/*.apk\n          if-no-files-found: error\n          retention-days: 30\n          \n"
   },
   {
-    path: '.github/workflows/android-build.yml',
-    category: 'workflow',
-    description: 'GitHub Actions workflow compiling APK and uploading artifacts',
-    content: `name: Android CI/CD Build & Package
-on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    name: Build & Test Android APK
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant Execute Permission to Gradlew
-        run: chmod +x ./gradlew || (cd android && chmod +x ./gradlew)
-
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest --stacktrace || true
-
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
-
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace || true
-
-      - name: Upload Debug APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: learn-korean-debug-apk
-          path: "**/build/outputs/apk/debug/*.apk"
-          retention-days: 14
-`
+    path: "README.md",
+    category: "docs",
+    description: "Learn Korean Language Android project & Start.io documentation",
+    content: "# Learn Korean Language — Android App by Shahab Millizai\n\n**Application ID:** `com.shahabmillizai.learnkorean`  \n**Developer:** Shahab Millizai  \n**Platform:** Android (Jetpack Compose, Kotlin 2.2, Java 17, AGP 8.9)  \n**Ad Network:** Start.io (StartApp) In-App SDK 5.4.0  \n**Start.io App ID:** `210777317`\n\n---\n\n## 🚀 Key Start.io Integration Details\n\n### 1. Initialization Architecture\n- **Single code initialization path:** `StartAppSDK.initParams(context, AdConfig.START_IO_APP_ID).setReturnAdsEnabled(false).setCallback(Runnable { ... }).init()`\n- `StartAppInitProvider` is explicitly removed from `AndroidManifest.xml` via `tools:node=\"remove\"` so no automatic premature initialization occurs.\n- `StartIoSdkState.isReady` gates all ad requests. The SDK is **only** marked ready once the callback confirms initialization.\n- If initialization throws an exception, `StartIoSdkState.markFailed(reason)` is called and ads are never loaded.\n\n### 2. Large, Tall Banner on Home Screen (Medium Rectangle - MREC)\n- Placement: Bottom of `HomeScreen`, centered horizontally, responsive to screen width.\n- Implementation: `com.startapp.sdk.ads.banner.Mrec`\n- Dimensions: **300dp width × 250dp height** (full height without clipping or distortion).\n- Non-overlapping: `LazyColumn` in `HomeScreen` has `weight(1f)` so all lesson content scrolls smoothly above the banner. Scaffold bottom navigation bar remains accessible without any obstruction.\n- Lifecycle: `showBanner()` on `ON_RESUME`, `hideBanner()` on `ON_PAUSE` / `ON_DESTROY`.\n- Recomposition protection: View is created once in `AndroidView(factory = ...)` and never reloaded inside `update`.\n\n### 3. Rewarded Video Ads\n- Mode: `StartAppAd.AdMode.REWARDED_VIDEO`\n- Reward: Unlocks **+150 XP** and the **Bonus TOPIK Vocabulary Pack** on the Home screen.\n- Callback: Tracks completion with `VideoListener.onVideoCompleted()` before awarding XP.\n- Preloading: Preloads next rewarded ad in the background after dismissal.\n\n### 4. Interstitial Ads\n- Displayed every 3 completed lessons outside of quiz flows.\n- Frequency capped and deferred until SDK is confirmed ready.\n\n---\n\n## 🛠 Building the APK\n\n```bash\n# Debug APK\n./gradlew assembleDebug\n\n# Signed Release APK (requires release keystore environment variables)\n./gradlew assembleRelease\n```\n"
   },
-  {
-    path: '.github/workflows/build-apk.yml',
-    category: 'workflow',
-    description: '1-Click GitHub Actions workflow to build and download APK directly from GitHub',
-    content: `name: Build Android APK (Learn Korean Language)
-
-on:
-  push:
-    branches: [ "main", "master" ]
-    tags: [ "v*" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  workflow_dispatch:
-    inputs:
-      build_type:
-        description: 'Choose which APK to build'
-        required: true
-        default: 'both'
-        type: choice
-        options:
-          - 'both'
-          - 'debug'
-          - 'release'
-      create_github_release:
-        description: 'Create a GitHub Release and attach the APK file(s)?'
-        required: false
-        default: false
-        type: boolean
-
-jobs:
-  build:
-    name: Build & Package Android APK
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Setup Gradle Environment
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-
-      - name: Prepare Android Project & Gradle Wrapper
-        run: |
-          if [ -f "./gradlew" ]; then
-            PROJECT_ROOT="."
-          elif [ -f "./android/gradlew" ]; then
-            PROJECT_ROOT="./android"
-          else
-            echo "Error: gradlew not found!" && exit 1
-          fi
-          echo "PROJECT_ROOT=$PROJECT_ROOT" >> $GITHUB_ENV
-          cd $PROJECT_ROOT
-          chmod +x ./gradlew
-
-          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-            mkdir -p gradle/wrapper
-            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar
-          fi
-
-      - name: Build Debug APK
-        if: \${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
-        run: |
-          cd $PROJECT_ROOT
-          ./gradlew assembleDebug --stacktrace
-
-      - name: Build Release APK
-        if: \${{ github.event.inputs.build_type == 'both' || github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/v') }}
-        run: |
-          cd $PROJECT_ROOT
-          ./gradlew assembleRelease --stacktrace || echo "Built release"
-
-      - name: Collect and Rename APK Artifacts
-        run: |
-          mkdir -p output-apks
-          find . -name "*.apk" -type f | while read -r apk_path; do
-            filename=$(basename "$apk_path")
-            if [[ "$filename" == *"debug"* ]]; then
-              cp "$apk_path" output-apks/LearnKorean-v1.0.0-debug.apk
-            elif [[ "$filename" == *"release"* ]]; then
-              cp "$apk_path" output-apks/LearnKorean-v1.0.0-release.apk
-            else
-              cp "$apk_path" "output-apks/LearnKorean-$filename"
-            fi
-          done
-          ls -lh output-apks/
-
-      - name: Upload APKs to GitHub Artifacts (Ready for Download)
-        uses: actions/upload-artifact@v4
-        with:
-          name: LearnKoreanLanguage-APKs
-          path: output-apks/*.apk
-          retention-days: 30
-`
-  },
-  {
-    path: 'README.md',
-    category: 'docs',
-    description: 'Complete build, AdMob, and release documentation',
-    content: `# Learn Korean Language – Complete Android Studio Project
-Developer: Shahab Millizai
-Package ID: com.shahabmillizai.learnkorean
-AdMob App ID: ca-app-pub-2790436784008422~8320873870
-
-Please refer to the documentation on how to build, test, and generate signed release APKs.
-`
-  }
 ];

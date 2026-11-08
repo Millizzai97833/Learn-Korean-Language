@@ -1,6 +1,6 @@
 {
   "name": "Learn Korean Language",
-  "description": "Production-ready Android Korean language learning application with Google AdMob monetization, comprehensive 4-level curriculum, and Hangul trainer by Shahab Millizai.",
+  "description": "Production-ready Android Korean language learning application with Start.io monetization, comprehensive 4-level curriculum, and Hangul trainer by Shahab Millizai.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
