@@ -44,6 +44,16 @@ fun BannerAdView(
 
     val isSdkReady = StartIoSdkState.isReady
 
+    val widthDp = when (bannerSize) {
+        StartIoBannerSize.STANDARD -> 320
+        StartIoBannerSize.LARGE_MREC -> 300
+    }
+
+    val heightDp = when (bannerSize) {
+        StartIoBannerSize.STANDARD -> 50
+        StartIoBannerSize.LARGE_MREC -> 250
+    }
+
     DisposableEffect(context, bannerSize, isSdkReady) {
         var disposed = false
 
@@ -55,22 +65,26 @@ fun BannerAdView(
 
             Log.i(
                 AdConfig.TAG_BANNER,
-                "Requesting Start.io banner: $format"
+                "Start.io SDK ready. Requesting $format banner."
             )
 
             try {
                 BannerRequest(context)
                     .setAdFormat(format)
                     .load { creator, error ->
-
                         Handler(Looper.getMainLooper()).post {
-
-                            if (disposed) return@post
+                            if (disposed) {
+                                Log.d(
+                                    AdConfig.TAG_BANNER,
+                                    "Banner response ignored because composable was disposed."
+                                )
+                                return@post
+                            }
 
                             if (creator == null) {
                                 Log.e(
                                     AdConfig.TAG_BANNER,
-                                    "Banner request failed: ${error ?: "Unknown error"}"
+                                    "Start.io returned no banner creator. Error: ${error ?: "No error details provided"}"
                                 )
                                 return@post
                             }
@@ -79,40 +93,31 @@ fun BannerAdView(
                                 val createdView = creator.create(
                                     context,
                                     object : BannerListener {
-
-                                        override fun onReceiveAd(
-                                            banner: View
-                                        ) {
+                                        override fun onReceiveAd(banner: View) {
                                             Log.i(
                                                 AdConfig.TAG_BANNER,
-                                                "Banner received successfully"
+                                                "Start.io banner received an ad."
                                             )
                                         }
 
-                                        override fun onFailedToReceiveAd(
-                                            banner: View
-                                        ) {
+                                        override fun onFailedToReceiveAd(banner: View) {
                                             Log.e(
                                                 AdConfig.TAG_BANNER,
-                                                "Banner failed to receive an ad"
+                                                "Start.io banner view failed to receive an ad."
                                             )
                                         }
 
-                                        override fun onImpression(
-                                            banner: View
-                                        ) {
+                                        override fun onImpression(banner: View) {
                                             Log.d(
                                                 AdConfig.TAG_BANNER,
-                                                "Banner impression recorded"
+                                                "Start.io banner impression recorded."
                                             )
                                         }
 
-                                        override fun onClick(
-                                            banner: View
-                                        ) {
+                                        override fun onClick(banner: View) {
                                             Log.d(
                                                 AdConfig.TAG_BANNER,
-                                                "Banner clicked"
+                                                "Start.io banner clicked."
                                             )
                                         }
                                     }
@@ -122,30 +127,28 @@ fun BannerAdView(
 
                                 Log.i(
                                     AdConfig.TAG_BANNER,
-                                    "Banner view created successfully"
+                                    "Start.io banner view created for format $format."
                                 )
-
                             } catch (e: Exception) {
                                 Log.e(
                                     AdConfig.TAG_BANNER,
-                                    "Could not create banner view",
+                                    "Failed to create Start.io banner view.",
                                     e
                                 )
                             }
                         }
                     }
-
             } catch (e: Exception) {
                 Log.e(
                     AdConfig.TAG_BANNER,
-                    "Banner request exception",
+                    "Start.io banner request threw an exception.",
                     e
                 )
             }
         } else {
             Log.d(
                 AdConfig.TAG_BANNER,
-                "Waiting for Start.io SDK initialization"
+                "Banner request not started: waiting for Start.io SDK initialization."
             )
         }
 
@@ -160,30 +163,19 @@ fun BannerAdView(
 
             Log.d(
                 AdConfig.TAG_BANNER,
-                "Banner view disposed"
+                "Start.io banner composable disposed."
             )
         }
-    }
-
-    val currentAdView = adView
-
-    val widthDp = when (bannerSize) {
-        StartIoBannerSize.STANDARD -> 320
-        StartIoBannerSize.LARGE_MREC -> 300
-    }
-
-    val heightDp = when (bannerSize) {
-        StartIoBannerSize.STANDARD -> 50
-        StartIoBannerSize.LARGE_MREC -> 250
     }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .height((heightDp + 12).dp)
             .padding(vertical = 6.dp),
         contentAlignment = Alignment.Center
     ) {
-        if (currentAdView != null) {
+        adView?.let { currentAdView ->
             AndroidView(
                 factory = { currentAdView },
                 modifier = Modifier
