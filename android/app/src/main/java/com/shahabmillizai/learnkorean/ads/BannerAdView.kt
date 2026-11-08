@@ -1,19 +1,16 @@
+
 package com.shahabmillizai.learnkorean.ads
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -25,243 +22,177 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.startapp.sdk.ads.banner.Banner
+import com.startapp.sdk.ads.banner.BannerFormat
 import com.startapp.sdk.ads.banner.BannerListener
-import com.startapp.sdk.ads.banner.Mrec
+import com.startapp.sdk.ads.banner.BannerRequest
 
-/**
- * Supported banner sizes for Start.io advertising.
- * LARGE_MREC (300x250) provides the big, tall banner requested for the Home screen.
- * STANDARD (320x50) is used for compact inline or bottom placement on other screens.
- */
 enum class StartIoBannerSize {
     STANDARD,
     LARGE_MREC
 }
 
-private tailrec fun Context.findActivity(): Activity? {
-    return when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
-}
-
-/**
- * Production-ready Jetpack Compose wrapper for Start.io Banner and MREC ads.
- *
- * Features:
- * - Gated strictly on StartIoSdkState.isReady (no premature ad requests)
- * - Supported dimensions without distortion:
- *     - LARGE_MREC: 300dp x 250dp centered horizontally
- *     - STANDARD: 320dp x 50dp
- * - BannerListener logging load, failure, impression, and click events
- * - Lifecycle-aware: hides on PAUSE/DESTROY, shows on RESUME
- * - Recomposition-protected: ad is never re-requested during Compose state changes
- * - Clean disposal upon leaving composition
- */
 @Composable
 fun BannerAdView(
     modifier: Modifier = Modifier,
     bannerSize: StartIoBannerSize = StartIoBannerSize.STANDARD
 ) {
-    // Only attempt to load banner if SDK has confirmed successful initialization
-    if (!StartIoSdkState.isReady) {
-        return
+    val context = LocalContext.current.applicationContext
+
+    var adView by remember(bannerSize) {
+        mutableStateOf<View?>(null)
     }
 
-    val context = LocalContext.current
-    val activity = remember(context) { context.findActivity() }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val isSdkReady = StartIoSdkState.isReady
 
-    var bannerViewRef by remember { mutableStateOf<View?>(null) }
-    var isAdReceived by remember { mutableStateOf(false) }
+    DisposableEffect(context, bannerSize, isSdkReady) {
+        var disposed = false
 
-    // Manage activity/screen lifecycle for the banner view
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    bannerViewRef?.let { v ->
-                        when (v) {
-                            is Mrec -> v.showBanner()
-                            is Banner -> v.showBanner()
-                        }
-                        Log.d(AdConfig.TAG_BANNER, "Lifecycle ON_RESUME: showing $bannerSize banner")
-                    }
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                    bannerViewRef?.let { v ->
-                        when (v) {
-                            is Mrec -> v.hideBanner()
-                            is Banner -> v.hideBanner()
-                        }
-                        Log.d(AdConfig.TAG_BANNER, "Lifecycle ON_PAUSE: hiding $bannerSize banner")
-                    }
-                }
-                Lifecycle.Event.ON_DESTROY -> {
-                    bannerViewRef?.let { v ->
-                        when (v) {
-                            is Mrec -> v.hideBanner()
-                            is Banner -> v.hideBanner()
-                        }
-                        Log.d(AdConfig.TAG_BANNER, "Lifecycle ON_DESTROY: cleaning up $bannerSize banner")
-                    }
-                    bannerViewRef = null
-                }
-                else -> Unit
+        if (isSdkReady) {
+            val format = when (bannerSize) {
+                StartIoBannerSize.STANDARD -> BannerFormat.BANNER
+                StartIoBannerSize.LARGE_MREC -> BannerFormat.MREC
             }
+
+            Log.i(
+                AdConfig.TAG_BANNER,
+                "Requesting Start.io banner: $format"
+            )
+
+            try {
+                BannerRequest(context)
+                    .setAdFormat(format)
+                    .load { creator, error ->
+
+                        Handler(Looper.getMainLooper()).post {
+
+                            if (disposed) return@post
+
+                            if (creator == null) {
+                                Log.e(
+                                    AdConfig.TAG_BANNER,
+                                    "Banner request failed: ${error ?: "Unknown error"}"
+                                )
+                                return@post
+                            }
+
+                            try {
+                                val createdView = creator.create(
+                                    context,
+                                    object : BannerListener {
+
+                                        override fun onReceiveAd(
+                                            banner: View
+                                        ) {
+                                            Log.i(
+                                                AdConfig.TAG_BANNER,
+                                                "Banner received successfully"
+                                            )
+                                        }
+
+                                        override fun onFailedToReceiveAd(
+                                            banner: View
+                                        ) {
+                                            Log.e(
+                                                AdConfig.TAG_BANNER,
+                                                "Banner failed to receive an ad"
+                                            )
+                                        }
+
+                                        override fun onImpression(
+                                            banner: View
+                                        ) {
+                                            Log.d(
+                                                AdConfig.TAG_BANNER,
+                                                "Banner impression recorded"
+                                            )
+                                        }
+
+                                        override fun onClick(
+                                            banner: View
+                                        ) {
+                                            Log.d(
+                                                AdConfig.TAG_BANNER,
+                                                "Banner clicked"
+                                            )
+                                        }
+                                    }
+                                )
+
+                                adView = createdView
+
+                                Log.i(
+                                    AdConfig.TAG_BANNER,
+                                    "Banner view created successfully"
+                                )
+
+                            } catch (e: Exception) {
+                                Log.e(
+                                    AdConfig.TAG_BANNER,
+                                    "Could not create banner view",
+                                    e
+                                )
+                            }
+                        }
+                    }
+
+            } catch (e: Exception) {
+                Log.e(
+                    AdConfig.TAG_BANNER,
+                    "Banner request exception",
+                    e
+                )
+            }
+        } else {
+            Log.d(
+                AdConfig.TAG_BANNER,
+                "Waiting for Start.io SDK initialization"
+            )
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
 
         onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            bannerViewRef?.let { v ->
-                when (v) {
-                    is Mrec -> v.hideBanner()
-                    is Banner -> v.hideBanner()
-                }
+            disposed = true
+
+            adView?.let { view ->
+                (view.parent as? ViewGroup)?.removeView(view)
             }
-            bannerViewRef = null
-            Log.d(AdConfig.TAG_BANNER, "BannerAdView ($bannerSize) disposed from composition")
+
+            adView = null
+
+            Log.d(
+                AdConfig.TAG_BANNER,
+                "Banner view disposed"
+            )
         }
     }
 
-    when (bannerSize) {
-        StartIoBannerSize.LARGE_MREC -> {
-            // Big tall banner: 300dp x 250dp, centered horizontally, no clipping or distortion
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                AndroidView(
-                    modifier = Modifier.size(
-                        width = AdConfig.MREC_WIDTH_DP.dp,
-                        height = AdConfig.MREC_HEIGHT_DP.dp
-                    ),
-                    factory = { viewContext ->
-                        Log.i(
-                            AdConfig.TAG_BANNER,
-                            "Creating Start.io Large MREC banner (${AdConfig.MREC_WIDTH_DP}x${AdConfig.MREC_HEIGHT_DP} dp)"
-                        )
+    val currentAdView = adView
 
-                        val adContext = activity ?: viewContext
+    val widthDp = when (bannerSize) {
+        StartIoBannerSize.STANDARD -> 320
+        StartIoBannerSize.LARGE_MREC -> 300
+    }
 
-                        val mrec = Mrec(adContext, object : BannerListener {
-                            override fun onReceiveAd(view: View) {
-                                isAdReceived = true
-                                (view as? Mrec)?.showBanner()
-                                Log.i(
-                                    AdConfig.TAG_BANNER,
-                                    "Start.io Large MREC banner loaded successfully (display: ${view.width}x${view.height})"
-                                )
-                            }
+    val heightDp = when (bannerSize) {
+        StartIoBannerSize.STANDARD -> 50
+        StartIoBannerSize.LARGE_MREC -> 250
+    }
 
-                            override fun onFailedToReceiveAd(view: View) {
-                                isAdReceived = false
-                                (view as? Mrec)?.hideBanner()
-                                Log.w(
-                                    AdConfig.TAG_BANNER,
-                                    "Start.io Large MREC banner failed to load. Start.io may return no-fill depending on network/inventory."
-                                )
-                            }
-
-                            override fun onImpression(view: View) {
-                                Log.d(AdConfig.TAG_BANNER, "Start.io Large MREC impression logged")
-                            }
-
-                            override fun onClick(view: View) {
-                                Log.d(AdConfig.TAG_BANNER, "Start.io Large MREC banner clicked")
-                            }
-                        })
-
-                        mrec.layoutParams = FrameLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            android.view.Gravity.CENTER
-                        )
-
-                        bannerViewRef = mrec
-                        mrec
-                    },
-                    update = {
-                        // Avoid triggering ad reload during Compose recompositions
-                    },
-                    onRelease = { view ->
-                        Log.d(AdConfig.TAG_BANNER, "Releasing Start.io Large MREC view")
-                        view.hideBanner()
-                    }
-                )
-            }
-        }
-
-        StartIoBannerSize.STANDARD -> {
-            // Standard banner: 320x50, centered horizontally
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(vertical = 4.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(AdConfig.STANDARD_BANNER_HEIGHT_DP.dp),
-                    factory = { viewContext ->
-                        Log.i(
-                            AdConfig.TAG_BANNER,
-                            "Creating Start.io Standard banner (height: ${AdConfig.STANDARD_BANNER_HEIGHT_DP} dp)"
-                        )
-
-                        val adContext = activity ?: viewContext
-
-                        val banner = Banner(adContext, object : BannerListener {
-                            override fun onReceiveAd(view: View) {
-                                isAdReceived = true
-                                (view as? Banner)?.showBanner()
-                                Log.i(
-                                    AdConfig.TAG_BANNER,
-                                    "Start.io Standard banner loaded successfully"
-                                )
-                            }
-
-                            override fun onFailedToReceiveAd(view: View) {
-                                isAdReceived = false
-                                (view as? Banner)?.hideBanner()
-                                Log.w(
-                                    AdConfig.TAG_BANNER,
-                                    "Start.io Standard banner failed to load"
-                                )
-                            }
-
-                            override fun onImpression(view: View) {
-                                Log.d(AdConfig.TAG_BANNER, "Start.io Standard banner impression logged")
-                            }
-
-                            override fun onClick(view: View) {
-                                Log.d(AdConfig.TAG_BANNER, "Start.io Standard banner clicked")
-                            }
-                        })
-
-                        bannerViewRef = banner
-                        banner
-                    },
-                    update = {
-                        // Avoid re-requesting ads on recomposition
-                    },
-                    onRelease = { view ->
-                        Log.d(AdConfig.TAG_BANNER, "Releasing Start.io Standard banner view")
-                        view.hideBanner()
-                    }
-                )
-            }
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (currentAdView != null) {
+            AndroidView(
+                factory = { currentAdView },
+                modifier = Modifier
+                    .width(widthDp.dp)
+                    .height(heightDp.dp),
+                update = {
+                    // Do not reload ads during Compose recomposition.
+                }
+            )
         }
     }
 }
