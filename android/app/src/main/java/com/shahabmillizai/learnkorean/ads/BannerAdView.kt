@@ -1,6 +1,10 @@
 
 package com.shahabmillizai.learnkorean.ads
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,39 +28,69 @@ enum class StartIoBannerSize {
     LARGE_MREC
 }
 
+private tailrec fun Context.findActivity(): Activity? {
+    return when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
+}
+
 @Composable
 fun BannerAdView(
     modifier: Modifier = Modifier,
-    bannerSize: StartIoBannerSize = StartIoBannerSize.STANDARD
+    bannerSize: StartIoBannerSize =
+        StartIoBannerSize.STANDARD
 ) {
-    val context = LocalContext.current
+    if (!AdConfig.sdkReady) return
 
-    val adSize = if (bannerSize == StartIoBannerSize.LARGE_MREC) {
+    val context = LocalContext.current
+    val activity = remember(context) {
+        context.findActivity()
+    }
+
+    val adSize = if (
+        bannerSize == StartIoBannerSize.LARGE_MREC
+    ) {
         AdSize.MEDIUM_RECTANGLE
     } else {
         AdSize.BANNER
     }
 
-    val height = if (bannerSize == StartIoBannerSize.LARGE_MREC) {
+    val adHeight = if (
+        bannerSize == StartIoBannerSize.LARGE_MREC
+    ) {
         250.dp
     } else {
         50.dp
     }
 
-    val adView = remember(bannerSize) {
-        AdView(context).apply {
+    val adView = remember(activity, bannerSize) {
+        AdView(activity ?: context).apply {
             adUnitId = AdConfig.bannerId()
             setAdSize(adSize)
 
             adListener = object : AdListener() {
                 override fun onAdLoaded() {
-                    android.util.Log.d(AdConfig.TAG, "Banner loaded")
+                    Log.i(
+                        AdConfig.TAG,
+                        "Mediated banner loaded"
+                    )
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    android.util.Log.e(
+                override fun onAdFailedToLoad(
+                    error: LoadAdError
+                ) {
+                    Log.e(
                         AdConfig.TAG,
-                        "Banner error: ${error.message}"
+                        "Banner failed: ${error.message}"
+                    )
+                }
+
+                override fun onAdImpression() {
+                    Log.d(
+                        AdConfig.TAG,
+                        "Banner impression recorded"
                     )
                 }
             }
@@ -64,9 +98,9 @@ fun BannerAdView(
     }
 
     DisposableEffect(adView) {
-        if (AdConfig.sdkReady) {
-            adView.loadAd(AdRequest.Builder().build())
-        }
+        adView.loadAd(
+            AdRequest.Builder().build()
+        )
 
         onDispose {
             adView.destroy()
@@ -76,7 +110,7 @@ fun BannerAdView(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(height + 12.dp)
+            .height(adHeight + 12.dp)
             .padding(vertical = 6.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -84,7 +118,7 @@ fun BannerAdView(
             factory = { adView },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height)
+                .height(adHeight)
         )
     }
 }
