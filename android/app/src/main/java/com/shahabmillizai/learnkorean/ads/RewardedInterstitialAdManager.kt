@@ -12,8 +12,10 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 
 class RewardedInterstitialAdManager(
-    private val context: Context
+    context: Context
 ) {
+    private val appContext = context.applicationContext
+
     private var rewardedAd: RewardedInterstitialAd? = null
     private var isLoading = false
 
@@ -37,36 +39,54 @@ class RewardedInterstitialAdManager(
         get() = isLoading
 
     fun loadAd() {
-        if (!AdConfig.sdkReady || isLoading || rewardedAd != null) return
+        if (
+            !AdConfig.sdkReady ||
+            isLoading ||
+            rewardedAd != null
+        ) return
 
         isLoading = true
 
         RewardedInterstitialAd.load(
-            context,
+            appContext,
             AdConfig.rewardedId(),
             AdRequest.Builder().build(),
             object : RewardedInterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: RewardedInterstitialAd) {
+
+                override fun onAdLoaded(
+                    ad: RewardedInterstitialAd
+                ) {
                     rewardedAd = ad
                     isLoading = false
 
+                    Log.i(
+                        AdConfig.TAG,
+                        "Rewarded interstitial loaded"
+                    )
+
                     val request = pendingReward
+
                     if (request != null) {
                         pendingReward = null
+                        rewardedAd = null
                         displayAd(request, ad)
                     }
-
-                    Log.d(AdConfig.TAG, "Rewarded interstitial loaded")
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
+                override fun onAdFailedToLoad(
+                    error: LoadAdError
+                ) {
                     rewardedAd = null
                     isLoading = false
 
-                    Log.e(AdConfig.TAG, error.message)
+                    Log.e(
+                        AdConfig.TAG,
+                        "Rewarded load failed: ${error.message}"
+                    )
 
                     val request = pendingReward
                     pendingReward = null
+
                     request?.onAdNotReady?.invoke()
                 }
             }
@@ -79,7 +99,8 @@ class RewardedInterstitialAdManager(
         onAdClosed: () -> Unit,
         onAdNotReady: () -> Unit
     ) {
-        if (!AdConfig.sdkReady ||
+        if (
+            !AdConfig.sdkReady ||
             activity.isFinishing ||
             activity.isDestroyed
         ) {
@@ -87,11 +108,16 @@ class RewardedInterstitialAdManager(
             return
         }
 
+        if (pendingReward != null) {
+            onAdNotReady()
+            return
+        }
+
         val request = PendingReward(
-            activity,
-            onRewardEarned,
-            onAdClosed,
-            onAdNotReady
+            activity = activity,
+            onRewardEarned = onRewardEarned,
+            onAdClosed = onAdClosed,
+            onAdNotReady = onAdNotReady
         )
 
         val ad = rewardedAd
@@ -101,8 +127,6 @@ class RewardedInterstitialAdManager(
             displayAd(request, ad)
             return
         }
-
-        if (pendingReward != null) return
 
         pendingReward = request
         loadAd()
@@ -114,13 +138,17 @@ class RewardedInterstitialAdManager(
     ) {
         val activity = request.activity
 
-        if (activity.isFinishing || activity.isDestroyed) {
+        if (
+            activity.isFinishing ||
+            activity.isDestroyed
+        ) {
             request.onAdNotReady()
             loadAd()
             return
         }
 
         var finished = false
+        var rewardEarned = false
 
         fun finish(failed: Boolean) {
             if (finished) return
@@ -137,21 +165,40 @@ class RewardedInterstitialAdManager(
 
         ad.fullScreenContentCallback =
             object : FullScreenContentCallback() {
+
                 override fun onAdDismissedFullScreenContent() {
                     finish(false)
                 }
 
-                override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                    Log.e(AdConfig.TAG, error.message)
+                override fun onAdFailedToShowFullScreenContent(
+                    error: AdError
+                ) {
+                    Log.e(
+                        AdConfig.TAG,
+                        "Rewarded display failed: ${error.message}"
+                    )
                     finish(true)
                 }
             }
 
-        ad.show(activity) {
-            request.onRewardEarned(
-                "topik_bonus_unlock",
-                REWARD_AMOUNT
+        try {
+            ad.show(activity) {
+                if (!rewardEarned) {
+                    rewardEarned = true
+
+                    request.onRewardEarned(
+                        "topik_bonus_unlock",
+                        REWARD_AMOUNT
+                    )
+                }
+            }
+        } catch (exception: Exception) {
+            Log.e(
+                AdConfig.TAG,
+                "Rewarded ad exception",
+                exception
             )
+            finish(true)
         }
     }
 }
