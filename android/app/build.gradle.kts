@@ -16,7 +16,8 @@ android {
         versionCode = 2
         versionName = "1.0.1"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner =
+            "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -46,12 +47,16 @@ android {
         }
 
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig =
+                signingConfigs.getByName("release")
+
             isMinifyEnabled = true
             isShrinkResources = true
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
+                getDefaultProguardFile(
+                    "proguard-android-optimize.txt"
+                ),
                 "proguard-rules.pro"
             )
         }
@@ -93,8 +98,14 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    // Start.io SDK 5.4.0
-    implementation(libs.startio.sdk)
+    // Google AdMob SDK
+    implementation(libs.google.mobile.ads)
+
+    // Official Start.io AdMob mediation adapter
+    implementation(libs.startio.admob.mediation)
+
+    // Google consent management
+    implementation(libs.google.ump)
 
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
