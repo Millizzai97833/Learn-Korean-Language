@@ -3,24 +3,19 @@ package com.shahabmillizai.learnkorean.ads
 
 import android.app.Activity
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import com.startapp.sdk.adsbase.Ad
-import com.startapp.sdk.adsbase.StartAppAd
-import com.startapp.sdk.adsbase.StartAppAd.AdMode
-import com.startapp.sdk.adsbase.VideoListener
-import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener
-import com.startapp.sdk.adsbase.adlisteners.AdEventListener
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 
 class RewardedInterstitialAdManager(
     private val context: Context
 ) {
-    private var rewardedAd: StartAppAd? = null
+    private var rewardedAd: RewardedInterstitialAd? = null
     private var isLoading = false
-    private var isWaitingForSdk = false
-
-    private val mainHandler = Handler(Looper.getMainLooper())
 
     private data class PendingReward(
         val activity: Activity,
@@ -35,111 +30,48 @@ class RewardedInterstitialAdManager(
         const val REWARD_AMOUNT = 150
     }
 
-    init {
-        StartIoSdkState.runWhenReady {
-            loadAd()
-        }
-    }
-
-    fun loadAd() {
-        if (!StartIoSdkState.isSdkReady()) {
-            if (StartIoSdkState.isSdkFailed()) {
-                Log.e(
-                    AdConfig.TAG_REWARDED,
-                    "Cannot load rewarded ad: Start.io SDK initialization failed."
-                )
-                notifyPendingAdUnavailable()
-                return
-            }
-
-            if (!isWaitingForSdk) {
-                isWaitingForSdk = true
-
-                Log.d(
-                    AdConfig.TAG_REWARDED,
-                    "Waiting for Start.io SDK before loading rewarded video."
-                )
-
-                StartIoSdkState.runWhenReady {
-                    isWaitingForSdk = false
-                    loadAd()
-                }
-            }
-            return
-        }
-
-        if (isLoading || rewardedAd != null) {
-            return
-        }
-
-        isLoading = true
-
-        Log.i(
-            AdConfig.TAG_REWARDED,
-            "Requesting Start.io rewarded video."
-        )
-
-        val newAd = StartAppAd(context)
-
-        try {
-            newAd.loadAd(
-                AdMode.REWARDED_VIDEO,
-                object : AdEventListener {
-
-                    override fun onReceiveAd(ad: Ad) {
-                        mainHandler.post {
-                            isLoading = false
-                            rewardedAd = newAd
-
-                            Log.i(
-                                AdConfig.TAG_REWARDED,
-                                "Rewarded video loaded successfully."
-                            )
-
-                            val request = pendingReward
-                            if (request != null) {
-                                pendingReward = null
-                                displayRewardedAd(request, newAd)
-                            }
-                        }
-                    }
-
-                    override fun onFailedToReceiveAd(ad: Ad?) {
-                        mainHandler.post {
-                            isLoading = false
-                            rewardedAd = null
-
-                            val errorMessage =
-                                ad?.errorMessage ?: "No ad fill or network error"
-
-                            Log.e(
-                                AdConfig.TAG_REWARDED,
-                                "Rewarded video failed to load: $errorMessage"
-                            )
-
-                            notifyPendingAdUnavailable()
-                        }
-                    }
-                }
-            )
-        } catch (e: Exception) {
-            isLoading = false
-
-            Log.e(
-                AdConfig.TAG_REWARDED,
-                "Exception while loading rewarded video.",
-                e
-            )
-
-            notifyPendingAdUnavailable()
-        }
-    }
-
     val isAdAvailable: Boolean
         get() = rewardedAd != null
 
     val isAdLoading: Boolean
         get() = isLoading
+
+    fun loadAd() {
+        if (!AdConfig.sdkReady || isLoading || rewardedAd != null) return
+
+        isLoading = true
+
+        RewardedInterstitialAd.load(
+            context,
+            AdConfig.rewardedId(),
+            AdRequest.Builder().build(),
+            object : RewardedInterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: RewardedInterstitialAd) {
+                    rewardedAd = ad
+                    isLoading = false
+
+                    val request = pendingReward
+                    if (request != null) {
+                        pendingReward = null
+                        displayAd(request, ad)
+                    }
+
+                    Log.d(AdConfig.TAG, "Rewarded interstitial loaded")
+                }
+
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    rewardedAd = null
+                    isLoading = false
+
+                    Log.e(AdConfig.TAG, error.message)
+
+                    val request = pendingReward
+                    pendingReward = null
+                    request?.onAdNotReady?.invoke()
+                }
+            }
+        )
+    }
 
     fun show(
         activity: Activity,
@@ -147,149 +79,79 @@ class RewardedInterstitialAdManager(
         onAdClosed: () -> Unit,
         onAdNotReady: () -> Unit
     ) {
-        if (activity.isFinishing || activity.isDestroyed) {
+        if (!AdConfig.sdkReady ||
+            activity.isFinishing ||
+            activity.isDestroyed
+        ) {
             onAdNotReady()
             return
         }
 
         val request = PendingReward(
-            activity = activity,
-            onRewardEarned = onRewardEarned,
-            onAdClosed = onAdClosed,
-            onAdNotReady = onAdNotReady
+            activity,
+            onRewardEarned,
+            onAdClosed,
+            onAdNotReady
         )
 
-        val availableAd = rewardedAd
+        val ad = rewardedAd
 
-        if (availableAd != null) {
+        if (ad != null) {
             rewardedAd = null
-            displayRewardedAd(request, availableAd)
+            displayAd(request, ad)
             return
         }
 
-        if (pendingReward != null) {
-            Log.w(
-                AdConfig.TAG_REWARDED,
-                "A rewarded ad request is already waiting."
-            )
-            return
-        }
+        if (pendingReward != null) return
 
         pendingReward = request
-
-        Log.i(
-            AdConfig.TAG_REWARDED,
-            "No cached rewarded ad. Waiting for an ad to load before displaying."
-        )
-
-        // If an ad is already loading, its callback will display it.
-        // Otherwise, start a new request.
         loadAd()
     }
 
-    private fun displayRewardedAd(
+    private fun displayAd(
         request: PendingReward,
-        ad: StartAppAd
+        ad: RewardedInterstitialAd
     ) {
         val activity = request.activity
 
         if (activity.isFinishing || activity.isDestroyed) {
-            Log.w(
-                AdConfig.TAG_REWARDED,
-                "Activity is no longer available. Cannot display rewarded video."
-            )
             request.onAdNotReady()
             loadAd()
             return
         }
 
-        var rewardGranted = false
         var finished = false
 
-        fun finish() {
+        fun finish(failed: Boolean) {
             if (finished) return
             finished = true
 
-            Log.d(
-                AdConfig.TAG_REWARDED,
-                "Rewarded ad finished. Preparing the next ad."
-            )
+            if (failed) {
+                request.onAdNotReady()
+            } else {
+                request.onAdClosed()
+            }
 
             loadAd()
-            request.onAdClosed()
         }
 
-        try {
-            ad.setVideoListener(object : VideoListener {
-                override fun onVideoCompleted() {
-                    if (!rewardGranted) {
-                        rewardGranted = true
-
-                        Log.i(
-                            AdConfig.TAG_REWARDED,
-                            "Video completed. Granting $REWARD_AMOUNT XP."
-                        )
-
-                        request.onRewardEarned(
-                            "topik_bonus_unlock",
-                            REWARD_AMOUNT
-                        )
-                    }
-                }
-            })
-
-            ad.showAd(object : AdDisplayListener {
-
-                override fun adDisplayed(ad: Ad) {
-                    Log.i(
-                        AdConfig.TAG_REWARDED,
-                        "Rewarded video displayed successfully."
-                    )
+        ad.fullScreenContentCallback =
+            object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    finish(false)
                 }
 
-                override fun adHidden(ad: Ad) {
-                    Log.i(
-                        AdConfig.TAG_REWARDED,
-                        "Rewarded video closed."
-                    )
-                    finish()
+                override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                    Log.e(AdConfig.TAG, error.message)
+                    finish(true)
                 }
+            }
 
-                override fun adClicked(ad: Ad) {
-                    Log.d(
-                        AdConfig.TAG_REWARDED,
-                        "Rewarded video clicked."
-                    )
-                }
-
-                override fun adNotDisplayed(ad: Ad) {
-                    Log.e(
-                        AdConfig.TAG_REWARDED,
-                        "Rewarded video could not be displayed."
-                    )
-                    finish()
-                }
-            })
-        } catch (e: Exception) {
-            Log.e(
-                AdConfig.TAG_REWARDED,
-                "Exception while displaying rewarded video.",
-                e
+        ad.show(activity) {
+            request.onRewardEarned(
+                "topik_bonus_unlock",
+                REWARD_AMOUNT
             )
-            finish()
-        }
-    }
-
-    private fun notifyPendingAdUnavailable() {
-        val request = pendingReward ?: return
-        pendingReward = null
-
-        mainHandler.post {
-            Log.w(
-                AdConfig.TAG_REWARDED,
-                "No rewarded video is available for the pending request."
-            )
-            request.onAdNotReady()
         }
     }
 }
