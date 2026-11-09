@@ -93,13 +93,13 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    // Google AdMob
+    // Google AdMob SDK
     implementation(libs.google.mobile.ads)
 
     // Start.io AdMob mediation adapter
     implementation(libs.startio.admob.mediation)
 
-    // Google privacy consent
+    // Google User Messaging Platform
     implementation(libs.google.ump)
 
     implementation(libs.gson)
