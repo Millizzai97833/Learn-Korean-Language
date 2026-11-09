@@ -1,3 +1,4 @@
+
 package com.shahabmillizai.learnkorean
 
 import android.os.Bundle
@@ -18,18 +19,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+import com.google.android.gms.ads.MobileAds
 import com.shahabmillizai.learnkorean.ads.AdConfig
 import com.shahabmillizai.learnkorean.ads.ConsentManager
 import com.shahabmillizai.learnkorean.ads.InterstitialAdManager
 import com.shahabmillizai.learnkorean.ads.RewardedInterstitialAdManager
-import com.shahabmillizai.learnkorean.ads.StartIoSdkState
 import com.shahabmillizai.learnkorean.data.local.UserPreferences
 import com.shahabmillizai.learnkorean.data.repository.KoreanRepository
 import com.shahabmillizai.learnkorean.tts.KoreanTtsManager
 import com.shahabmillizai.learnkorean.ui.navigation.MainAppNavigation
 import com.shahabmillizai.learnkorean.ui.theme.LearnKoreanTheme
-import com.startapp.sdk.adsbase.StartAppSDK
 
 class MainActivity : ComponentActivity() {
 
@@ -40,7 +39,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var repository: KoreanRepository
 
     private var appReady by mutableStateOf(false)
-    private var sdkInitializationStarted = false
+    private var adsInitializationStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +47,8 @@ class MainActivity : ComponentActivity() {
         val userPreferences = UserPreferences(this)
         repository = KoreanRepository(this, userPreferences)
         ttsManager = KoreanTtsManager(this)
-        consentManager = ConsentManager(this)
 
-        // Instantiate ad managers (they internally wait for StartIoSdkState.isReady before loading)
+        consentManager = ConsentManager(this)
         interstitialManager = InterstitialAdManager(this)
         rewardedManager = RewardedInterstitialAdManager(this)
 
@@ -86,66 +84,45 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Gather consent first, then initiate Start.io SDK
         consentManager.gatherConsent(this) {
-            initializeStartIo()
+            if (consentManager.canRequestAds) {
+                initializeAdMob()
+            } else {
+                appReady = true
+            }
         }
-
-        // App content is ready to render
-        appReady = true
     }
 
-    private fun initializeStartIo() {
-        if (sdkInitializationStarted) return
-        if (isFinishing || isDestroyed) return
+    private fun initializeAdMob() {
+        if (adsInitializationStarted || isFinishing || isDestroyed) return
 
-        sdkInitializationStarted = true
+        adsInitializationStarted = true
 
-        try {
-            if (AdConfig.forceTestMode) {
-                StartAppSDK.setTestAdsEnabled(true)
-                Log.d(AdConfig.TAG_SDK, "Start.io test ads enabled for debug environment")
+        MobileAds.initialize(this) { status ->
+            runOnUiThread {
+                AdConfig.sdkReady = true
+
+                Log.i(
+                    AdConfig.TAG,
+                    "AdMob initialized: ${status.adapterStatusMap}"
+                )
+
+                interstitialManager.loadAd()
+                rewardedManager.loadAd()
+
+                appReady = true
             }
-
-            Log.i(
-                AdConfig.TAG_SDK,
-                "Initializing Start.io SDK (App ID: ${AdConfig.START_IO_APP_ID})..."
-            )
-
-            StartAppSDK.initParams(
-                applicationContext,
-                AdConfig.START_IO_APP_ID
-            )
-                .setReturnAdsEnabled(false)
-                .setCallback(Runnable {
-                    runOnUiThread {
-                        Log.i(
-                            AdConfig.TAG_SDK,
-                            "Start.io SDK initialization callback confirmed success"
-                        )
-                        StartIoSdkState.markReady()
-                    }
-                })
-                .init()
-
-        } catch (e: Exception) {
-            Log.e(
-                AdConfig.TAG_SDK,
-                "Start.io SDK initialization failed with exception: ${e.message}",
-                e
-            )
-            // CRITICAL: Do NOT mark SDK as ready on failure
-            StartIoSdkState.markFailed(e.message ?: "Initialization exception")
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        if (StartIoSdkState.isSdkReady()) {
+        if (AdConfig.sdkReady) {
             if (::interstitialManager.isInitialized) {
                 interstitialManager.loadAd()
             }
+
             if (::rewardedManager.isInitialized) {
                 rewardedManager.loadAd()
             }
@@ -153,10 +130,10 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-
         if (::ttsManager.isInitialized) {
             ttsManager.shutdown()
         }
+
+        super.onDestroy()
     }
 }
