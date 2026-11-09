@@ -1,9 +1,9 @@
+
 package com.shahabmillizai.learnkorean.ui.screens
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Security
@@ -12,11 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
+import com.shahabmillizai.learnkorean.ads.AdConfig
 import com.shahabmillizai.learnkorean.ads.BannerAdView
 import com.shahabmillizai.learnkorean.ads.ConsentManager
 import com.shahabmillizai.learnkorean.data.repository.KoreanRepository
@@ -30,8 +30,13 @@ fun ProfileScreen(
     consentManager: ConsentManager
 ) {
     val context = LocalContext.current
-    val progress by repository.userPreferences.progressFlow.collectAsState()
-    var showPrivacyDialog by remember { mutableStateOf(false) }
+
+    val progress by repository.userPreferences
+        .progressFlow.collectAsState()
+
+    var showPrivacyDialog by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -41,7 +46,8 @@ fun ProfileScreen(
                 .weight(1f)
                 .fillMaxWidth(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement =
+                Arrangement.spacedBy(16.dp)
         ) {
             item {
                 Card(
@@ -52,22 +58,17 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalAlignment =
+                            Alignment.CenterHorizontally,
+                        verticalArrangement =
+                            Arrangement.spacedBy(10.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.School,
-                                contentDescription = "Learner",
-                                tint = TaegeukBlue,
-                                modifier = Modifier.size(42.dp)
-                            )
-                        }
+                        Icon(
+                            Icons.Default.School,
+                            contentDescription = "Learner",
+                            tint = TaegeukBlue,
+                            modifier = Modifier.size(48.dp)
+                        )
 
                         Text(
                             "Korean Learner",
@@ -78,16 +79,21 @@ fun ProfileScreen(
                         Text(
                             "Application by Shahab Millizai",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme
+                                .onSurfaceVariant
                         )
 
                         HorizontalDivider()
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement =
+                                Arrangement.SpaceEvenly
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment =
+                                    Alignment.CenterHorizontally
+                            ) {
                                 Text(
                                     "${progress.xp}",
                                     fontWeight = FontWeight.Bold,
@@ -97,7 +103,10 @@ fun ProfileScreen(
                                 Text("Total XP", fontSize = 12.sp)
                             }
 
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment =
+                                    Alignment.CenterHorizontally
+                            ) {
                                 Text(
                                     "${progress.streakDays}",
                                     fontWeight = FontWeight.Bold,
@@ -107,7 +116,10 @@ fun ProfileScreen(
                                 Text("Streak days", fontSize = 12.sp)
                             }
 
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment =
+                                    Alignment.CenterHorizontally
+                            ) {
                                 Text(
                                     "${progress.completedLessonIds.size}",
                                     fontWeight = FontWeight.Bold,
@@ -123,34 +135,37 @@ fun ProfileScreen(
 
             item {
                 Text(
-                    "Monetization",
+                    "Advertising",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement =
+                            Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            "Start.io Advertising",
+                            "AdMob Mediation",
                             fontWeight = FontWeight.Bold
                         )
 
                         Text(
-                            "This app uses Start.io to display supported advertisements.",
+                            "This app uses Google Mobile Ads. " +
+                                "Configured mediation partners, " +
+                                "including Start.io, may participate " +
+                                "in ad requests.",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme
+                                .onSurfaceVariant
                         )
 
                         Text(
-                            "Start.io App ID: 210777317",
+                            "Start.io App ID: ${AdConfig.START_IO_APP_ID}",
                             fontSize = 12.sp
                         )
                     }
@@ -165,18 +180,19 @@ fun ProfileScreen(
                 )
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        verticalArrangement =
+                            Arrangement.spacedBy(10.dp)
                     ) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalAlignment =
+                                Alignment.CenterVertically,
+                            horizontalArrangement =
+                                Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
                                 Icons.Default.Security,
@@ -185,35 +201,51 @@ fun ProfileScreen(
                             )
 
                             Text(
-                                "Privacy Policy & Disclosures",
+                                "Privacy Information",
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
 
                         Text(
-                            "Learn Korean Language by Shahab Millizai uses " +
-                                "Start.io advertising services. Advertising and " +
-                                "consent practices are subject to the applicable " +
-                                "Start.io policies and the app's published privacy policy.",
+                            "Learn Korean Language provides " +
+                                "offline learning content and uses " +
+                                "Google Mobile Ads with configured " +
+                                "advertising mediation partners. " +
+                                "Ad availability and personalization " +
+                                "depend on consent, region, and " +
+                                "advertising inventory.",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme
+                                .onSurfaceVariant
                         )
 
                         TextButton(
-                            onClick = { showPrivacyDialog = true }
+                            onClick = {
+                                showPrivacyDialog = true
+                            }
                         ) {
                             Text("Read privacy information")
                         }
 
-                        OutlinedButton(
-                            onClick = {
-                                (context as? Activity)?.let { activity ->
-                                    consentManager.showPrivacyOptionsForm(activity) {}
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                        if (
+                            consentManager.isPrivacyOptionsRequired
                         ) {
-                            Text("Change Advertising Privacy Choices")
+                            OutlinedButton(
+                                onClick = {
+                                    (context as? Activity)?.let {
+                                        activity ->
+                                        consentManager
+                                            .showPrivacyOptionsForm(
+                                                activity
+                                            ) {}
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    "Change Advertising Privacy Choices"
+                                )
+                            }
                         }
                     }
                 }
@@ -226,7 +258,8 @@ fun ProfileScreen(
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement =
+                            Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
                             "About",
@@ -234,20 +267,25 @@ fun ProfileScreen(
                         )
 
                         Text("Learn Korean Language")
+
                         Text(
                             "Developer: Shahab Millizai",
                             fontSize = 13.sp
                         )
+
                         Text(
                             "Package: com.shahabmillizai.learnkorean",
                             fontSize = 12.sp
                         )
+
                         Text(
-                            "Learn Hangul, Korean vocabulary, grammar, " +
-                                "pronunciation and TOPIK preparation with Urdu " +
-                                "and English explanations.",
+                            "Learn Hangul, Korean vocabulary, " +
+                                "grammar, pronunciation and TOPIK " +
+                                "preparation with Urdu and English " +
+                                "explanations.",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme
+                                .onSurfaceVariant
                         )
                     }
                 }
@@ -259,22 +297,26 @@ fun ProfileScreen(
 
     if (showPrivacyDialog) {
         AlertDialog(
-            onDismissRequest = { showPrivacyDialog = false },
+            onDismissRequest = {
+                showPrivacyDialog = false
+            },
             title = {
                 Text("Privacy Information")
             },
             text = {
                 Text(
-                    "Learn Korean Language provides offline learning " +
-                        "content and uses Start.io advertising services. " +
-                        "Please read the app's published privacy policy " +
-                        "and Start.io's privacy information for details " +
-                        "about advertising and data practices."
+                    "This app uses Google Mobile Ads and " +
+                        "configured advertising mediation partners. " +
+                        "Please read the published privacy policy " +
+                        "for complete information about data " +
+                        "collection, advertising, and consent."
                 )
             },
             confirmButton = {
                 TextButton(
-                    onClick = { showPrivacyDialog = false }
+                    onClick = {
+                        showPrivacyDialog = false
+                    }
                 ) {
                     Text("Close")
                 }
