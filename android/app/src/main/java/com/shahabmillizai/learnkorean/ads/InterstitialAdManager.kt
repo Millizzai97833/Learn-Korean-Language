@@ -12,8 +12,10 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 class InterstitialAdManager(
-    private val context: Context
+    context: Context
 ) {
+    private val appContext = context.applicationContext
+
     private var interstitialAd: InterstitialAd? = null
     private var isLoading = false
     private var completedLessonCount = 0
@@ -21,25 +23,42 @@ class InterstitialAdManager(
     private val lessonThreshold = 3
 
     fun loadAd() {
-        if (!AdConfig.sdkReady || isLoading || interstitialAd != null) return
+        if (
+            !AdConfig.sdkReady ||
+            isLoading ||
+            interstitialAd != null
+        ) return
 
         isLoading = true
 
         InterstitialAd.load(
-            context,
+            appContext,
             AdConfig.interstitialId(),
             AdRequest.Builder().build(),
             object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
+
+                override fun onAdLoaded(
+                    ad: InterstitialAd
+                ) {
                     interstitialAd = ad
                     isLoading = false
-                    Log.d(AdConfig.TAG, "Interstitial loaded")
+
+                    Log.i(
+                        AdConfig.TAG,
+                        "Interstitial loaded"
+                    )
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
+                override fun onAdFailedToLoad(
+                    error: LoadAdError
+                ) {
                     interstitialAd = null
                     isLoading = false
-                    Log.e(AdConfig.TAG, error.message)
+
+                    Log.e(
+                        AdConfig.TAG,
+                        "Interstitial load failed: ${error.message}"
+                    )
                 }
             }
         )
@@ -50,7 +69,11 @@ class InterstitialAdManager(
         isQuizActive: Boolean,
         onDismissed: () -> Unit
     ) {
-        if (isQuizActive) {
+        if (
+            isQuizActive ||
+            activity.isFinishing ||
+            activity.isDestroyed
+        ) {
             onDismissed()
             return
         }
@@ -70,34 +93,47 @@ class InterstitialAdManager(
             return
         }
 
-        if (activity.isFinishing || activity.isDestroyed) {
-            onDismissed()
-            return
-        }
+        interstitialAd = null
 
         var finished = false
 
         fun finish() {
             if (finished) return
             finished = true
-            interstitialAd = null
+
             completedLessonCount = 0
+
             loadAd()
             onDismissed()
         }
 
         ad.fullScreenContentCallback =
             object : FullScreenContentCallback() {
+
                 override fun onAdDismissedFullScreenContent() {
                     finish()
                 }
 
-                override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                    Log.e(AdConfig.TAG, error.message)
+                override fun onAdFailedToShowFullScreenContent(
+                    error: AdError
+                ) {
+                    Log.e(
+                        AdConfig.TAG,
+                        "Interstitial display failed: ${error.message}"
+                    )
                     finish()
                 }
             }
 
-        ad.show(activity)
+        try {
+            ad.show(activity)
+        } catch (exception: Exception) {
+            Log.e(
+                AdConfig.TAG,
+                "Interstitial exception",
+                exception
+            )
+            finish()
+        }
     }
 }
