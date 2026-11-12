@@ -16,6 +16,7 @@ coroutines = "1.9.0"
 googleMobileAds = "24.9.0"
 startIoMediation = "3.1.1"
 ump = "3.2.0"
+yandexMobileAds = "8.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ startio-admob-mediation = { group = "io.start", name = "admob-mediation", versio
 google-ump = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+yandex-mobile-ads = { group = "com.yandex.android", name = "mobileads", version.ref = "yandexMobileAds" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
