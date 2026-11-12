@@ -84,12 +84,14 @@ android {
 }
 
 dependencies {
+    // Android core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)
 
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -98,25 +100,32 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    // Google AdMob SDK
+    // Google AdMob
     implementation(libs.google.mobile.ads)
 
-    // Official Start.io AdMob mediation adapter
+    // Yandex Mobile Ads SDK 8.6.0
+    implementation(libs.yandex.mobile.ads)
+
+    // Start.io AdMob mediation
     implementation(libs.startio.admob.mediation)
 
-    // Google consent management
+    // Google User Messaging Platform
     implementation(libs.google.ump)
 
+    // Other dependencies
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Unit tests
     testImplementation(libs.junit)
 
+    // Android tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
+    // Debug tools
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
