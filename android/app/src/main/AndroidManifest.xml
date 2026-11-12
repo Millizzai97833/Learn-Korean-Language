@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shahabmillizai.learnkorean">
@@ -19,9 +20,16 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:hardwareAccelerated="true">
 
+        <!-- Existing AdMob application ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2790436784008422~8320873870" />
+
+        <!-- Disable automatic Yandex initialization.
+             MainActivity initializes Yandex after the consent check. -->
+        <meta-data
+            android:name="com.yandex.mobile.ads.AUTOMATIC_SDK_INITIALIZATION"
+            android:value="false" />
 
         <activity
             android:name=".MainActivity"
@@ -32,9 +40,12 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
+
     </application>
+
 </manifest>
