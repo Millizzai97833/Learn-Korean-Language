@@ -4,20 +4,27 @@ package com.shahabmillizai.learnkorean.ads
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 
-class RewardedInterstitialAdManager(
-    context: Context
-) {
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequest
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
+import com.yandex.mobile.ads.rewarded.Reward
+import com.yandex.mobile.ads.rewarded.RewardedAd
+import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoader
+
+class RewardedInterstitialAdManager(context: Context) {
+
     private val appContext = context.applicationContext
 
-    private var rewardedAd: RewardedInterstitialAd? = null
+    private var rewardedAdLoader: RewardedAdLoader? = null
+    private var rewardedAd: RewardedAd? = null
+
     private var isLoading = false
+    private var isShowing = false
+    private var destroyed = false
 
     private data class PendingReward(
         val activity: Activity,
@@ -30,6 +37,7 @@ class RewardedInterstitialAdManager(
 
     companion object {
         const val REWARD_AMOUNT = 150
+        private const val REWARD_TYPE = "topik_bonus_unlock"
     }
 
     val isAdAvailable: Boolean
@@ -40,57 +48,88 @@ class RewardedInterstitialAdManager(
 
     fun loadAd() {
         if (
-            !AdConfig.sdkReady ||
+            destroyed ||
+            !AdConfig.yandexSdkReady ||
             isLoading ||
             rewardedAd != null
-        ) return
+        ) {
+            return
+        }
 
         isLoading = true
 
-        RewardedInterstitialAd.load(
-            appContext,
-            AdConfig.rewardedId(),
-            AdRequest.Builder().build(),
-            object : RewardedInterstitialAdLoadCallback() {
+        try {
+            if (rewardedAdLoader == null) {
+                rewardedAdLoader = RewardedAdLoader(appContext)
+            }
 
-                override fun onAdLoaded(
-                    ad: RewardedInterstitialAd
-                ) {
-                    rewardedAd = ad
-                    isLoading = false
+            val request = AdRequest.Builder(
+                AdConfig.rewardedId()
+            ).build()
 
-                    Log.i(
-                        AdConfig.TAG,
-                        "Rewarded interstitial loaded"
-                    )
+            rewardedAdLoader?.loadAd(
+                request,
+                object : RewardedAdLoadListener {
 
-                    val request = pendingReward
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        isLoading = false
 
-                    if (request != null) {
-                        pendingReward = null
+                        if (destroyed) {
+                            ad.setAdEventListener(null)
+                            return
+                        }
+
+                        rewardedAd = ad
+
+                        Log.i(
+                            AdConfig.TAG,
+                            "Yandex rewarded ad loaded successfully"
+                        )
+
+                        val requestPending = pendingReward
+
+                        if (requestPending != null) {
+                            pendingReward = null
+                            rewardedAd = null
+                            displayAd(requestPending, ad)
+                        }
+                    }
+
+                    override fun onAdFailedToLoad(
+                        error: AdRequestError
+                    ) {
+                        isLoading = false
                         rewardedAd = null
-                        displayAd(request, ad)
+
+                        Log.e(
+                            AdConfig.TAG,
+                            "Yandex rewarded load failed: $error"
+                        )
+
+                        val requestPending = pendingReward
+                        pendingReward = null
+
+                        requestPending?.onAdNotReady?.invoke()
+
+                        // Do not immediately retry after a load failure.
                     }
                 }
+            )
 
-                override fun onAdFailedToLoad(
-                    error: LoadAdError
-                ) {
-                    rewardedAd = null
-                    isLoading = false
+        } catch (exception: Exception) {
+            isLoading = false
 
-                    Log.e(
-                        AdConfig.TAG,
-                        "Rewarded load failed: ${error.message}"
-                    )
+            Log.e(
+                AdConfig.TAG,
+                "Yandex rewarded loading exception",
+                exception
+            )
 
-                    val request = pendingReward
-                    pendingReward = null
+            val requestPending = pendingReward
+            pendingReward = null
 
-                    request?.onAdNotReady?.invoke()
-                }
-            }
-        )
+            requestPending?.onAdNotReady?.invoke()
+        }
     }
 
     fun show(
@@ -100,7 +139,8 @@ class RewardedInterstitialAdManager(
         onAdNotReady: () -> Unit
     ) {
         if (
-            !AdConfig.sdkReady ||
+            destroyed ||
+            !AdConfig.yandexSdkReady ||
             activity.isFinishing ||
             activity.isDestroyed
         ) {
@@ -108,7 +148,7 @@ class RewardedInterstitialAdManager(
             return
         }
 
-        if (pendingReward != null) {
+        if (isShowing || pendingReward != null) {
             onAdNotReady()
             return
         }
@@ -125,23 +165,24 @@ class RewardedInterstitialAdManager(
         if (ad != null) {
             rewardedAd = null
             displayAd(request, ad)
-            return
+        } else {
+            pendingReward = request
+            loadAd()
         }
-
-        pendingReward = request
-        loadAd()
     }
 
     private fun displayAd(
         request: PendingReward,
-        ad: RewardedInterstitialAd
+        ad: RewardedAd
     ) {
         val activity = request.activity
 
         if (
+            destroyed ||
             activity.isFinishing ||
             activity.isDestroyed
         ) {
+            ad.setAdEventListener(null)
             request.onAdNotReady()
             loadAd()
             return
@@ -150,9 +191,15 @@ class RewardedInterstitialAdManager(
         var finished = false
         var rewardEarned = false
 
+        isShowing = true
+
         fun finish(failed: Boolean) {
             if (finished) return
+
             finished = true
+            isShowing = false
+
+            ad.setAdEventListener(null)
 
             if (failed) {
                 request.onAdNotReady()
@@ -163,42 +210,93 @@ class RewardedInterstitialAdManager(
             loadAd()
         }
 
-        ad.fullScreenContentCallback =
-            object : FullScreenContentCallback() {
+        ad.setAdEventListener(
+            object : RewardedAdEventListener {
 
-                override fun onAdDismissedFullScreenContent() {
+                override fun onAdShown() {
+                    Log.i(
+                        AdConfig.TAG,
+                        "Yandex rewarded ad displayed"
+                    )
+                }
+
+                override fun onAdFailedToShow(adError: AdError) {
+                    Log.e(
+                        AdConfig.TAG,
+                        "Yandex rewarded display failed: $adError"
+                    )
+
+                    finish(true)
+                }
+
+                override fun onAdDismissed() {
+                    Log.i(
+                        AdConfig.TAG,
+                        "Yandex rewarded ad dismissed"
+                    )
+
                     finish(false)
                 }
 
-                override fun onAdFailedToShowFullScreenContent(
-                    error: AdError
-                ) {
-                    Log.e(
+                override fun onAdClicked() {
+                    Log.i(
                         AdConfig.TAG,
-                        "Rewarded display failed: ${error.message}"
+                        "Yandex rewarded ad clicked"
                     )
-                    finish(true)
+                }
+
+                override fun onAdImpression(
+                    impressionData: ImpressionData?
+                ) {
+                    Log.i(
+                        AdConfig.TAG,
+                        "Yandex rewarded impression recorded"
+                    )
+                }
+
+                override fun onRewarded(reward: Reward) {
+                    if (!rewardEarned) {
+                        rewardEarned = true
+
+                        Log.i(
+                            AdConfig.TAG,
+                            "Yandex reward confirmed"
+                        )
+
+                        request.onRewardEarned(
+                            REWARD_TYPE,
+                            REWARD_AMOUNT
+                        )
+                    }
                 }
             }
+        )
 
         try {
-            ad.show(activity) {
-                if (!rewardEarned) {
-                    rewardEarned = true
-
-                    request.onRewardEarned(
-                        "topik_bonus_unlock",
-                        REWARD_AMOUNT
-                    )
-                }
-            }
+            ad.show(activity)
         } catch (exception: Exception) {
             Log.e(
                 AdConfig.TAG,
-                "Rewarded ad exception",
+                "Yandex rewarded show exception",
                 exception
             )
+
             finish(true)
         }
+    }
+
+    fun destroy() {
+        if (destroyed) return
+
+        destroyed = true
+        isLoading = false
+        isShowing = false
+
+        pendingReward = null
+
+        rewardedAd?.setAdEventListener(null)
+        rewardedAd = null
+
+        rewardedAdLoader = null
     }
 }
